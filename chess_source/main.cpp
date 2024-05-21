@@ -3,8 +3,9 @@
 int main()
 {
     // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 800), "My window", sf::Style::Fullscreen);
-
+    sf::RenderWindow window(sf::VideoMode(800, 600), "chess", sf::Style::Titlebar|sf::Style::Resize|sf::Style::Close);
+    window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width / 2 - 400,
+                                  sf::VideoMode::getDesktopMode().height / 2 - 320));
     // run the program as long as the window is open
     while (window.isOpen())
     {
