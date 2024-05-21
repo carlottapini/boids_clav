@@ -3,7 +3,7 @@
 int main()
 {
     // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 800), "My window");
+    sf::RenderWindow window(sf::VideoMode(800, 800), "My window", sf::Style::Fullscreen);
 
     // run the program as long as the window is open
     while (window.isOpen())
