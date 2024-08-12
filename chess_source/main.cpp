@@ -18,7 +18,7 @@ int main()
                 window.close();
         }
 
-        // clear the window with black color
+        // clear the window with chosen color (red, green, blue)
         window.clear(sf::Color(78,116,61));
 
         // draw everything here...
@@ -30,3 +30,4 @@ int main()
 
     return 0;
 }
+//provaaaa
