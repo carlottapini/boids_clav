@@ -4,7 +4,7 @@ int main()
 {
     // create the window
     sf::RenderWindow window(sf::VideoMode(800, 600), "birds simulation", sf::Style::Titlebar|sf::Style::Resize|sf::Style::Close);
-    window.setPosition(sf::Vector2i(280, 50));
+    window.setPosition(sf::Vector2i(280, 50)); //move the window
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -29,4 +29,3 @@ int main()
 
     return 0;
 }
-//provaaaa
