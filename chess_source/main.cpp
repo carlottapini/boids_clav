@@ -3,9 +3,8 @@
 int main()
 {
     // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "chess", sf::Style::Titlebar|sf::Style::Resize|sf::Style::Close);
-    window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width / 2 - 400,
-                                  sf::VideoMode::getDesktopMode().height / 2 - 320));
+    sf::RenderWindow window(sf::VideoMode(800, 600), "birds simulation", sf::Style::Titlebar|sf::Style::Resize|sf::Style::Close);
+    window.setPosition(sf::Vector2i(280, 50));
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -19,7 +18,7 @@ int main()
         }
 
         // clear the window with chosen color (red, green, blue)
-        window.clear(sf::Color(78,116,61));
+        window.clear(sf::Color(145,224,255));
 
         // draw everything here...
         //window.draw();
