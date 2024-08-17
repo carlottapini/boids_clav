@@ -1,3 +1,4 @@
+#include "boids.hpp"
 #include <SFML/Graphics.hpp>
 #include <random>
 
@@ -22,6 +23,7 @@ int main()
         window.clear(sf::Color(145,224,255));
 
         // draw everything here...
+        
         //window.draw();
 
         // end the current frame
