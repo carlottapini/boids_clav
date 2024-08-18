@@ -24,16 +24,16 @@ int main() {
     // draw everything here...
     int n{1000};  // choose the number of birds in the floak
     std::default_random_engine
-        generetor;  // choose the generetor for the random numbers
+        gen;  // choose the generetor for the random numbers
     std::uniform_real_distribution<float> x_distribution(
         0.0f, 800.0f);  // choose the distribution for x
     std::uniform_real_distribution<float> y_distribution(
         0.0f, 600.0f);  // and y coordinates of boids
 
-    // draw the floak of n boids
+    // draw the flock of n boids
     for (int i{0}; i < n; ++i) {
-      float x = x_distribution(generetor);
-      float y = y_distribution(generetor);
+      float x = x_distribution(gen);
+      float y = y_distribution(gen);
       bd::boid bird(x, y);
       bird.draw(window);
     }
