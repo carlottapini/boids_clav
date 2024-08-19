@@ -19,33 +19,32 @@ int main() {
     }
 
     // clear the window with chosen color (red, green, blue)
-    window.clear(sf::Color(145, 224, 255));
+  window.clear(sf::Color(145, 224, 255));
 
     // draw everything here...
-    int n{1000};  // choose the number of birds in the floak
-    std::default_random_engine
-        gen;  // choose the generetor for the random numbers
-    std::uniform_real_distribution<float> x_distribution(
-        0.0f, 800.0f);  // choose the distribution for x
-    std::uniform_real_distribution<float> y_distribution(
-        0.0f, 600.0f);  // and y coordinates of boids
+  int n{1000};  // choose the number of birds in the floak
 
-    // draw the flock of n boids
-    for (int i{0}; i < n; ++i) {
-      float x = x_distribution(gen);
-      float y = y_distribution(gen);
-      bd::boid bird(x, y);
-      bird.draw(window);
-    }
+  std::random_device rd; //creates engine
+  std::default_random_engine eng {rd()}; //gives different seed each time
+  std::uniform_real_distribution<float> x_distribution(0.0f, 800.0f);  // choose the distribution for x
+  std::uniform_real_distribution<float> y_distribution(0.0f, 600.0f); // and y coordinates of boids
 
-    // end the current frame
-    window.display();
-
-    //change initial condition for next program running
-    x_distribution.reset();
-    y_distribution.reset();
-
+  // draw the flock of n boids
+  for (int i{0}; i < n; ++i) {
+    float x = x_distribution(eng);
+    float y = y_distribution(eng);
+    bd::boid bird(x, y);
+    bird.draw(window);
   }
+
+  // end the current frame
+  window.display();
+
+  //change initial condition for next program running
+  x_distribution.reset();
+  y_distribution.reset();
+
+}
 
   return 0;
 }
