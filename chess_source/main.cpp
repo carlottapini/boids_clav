@@ -8,8 +8,12 @@ int main() {
       sf::VideoMode(800, 600), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   window.setPosition(sf::Vector2i(280, 50));  // move the window
+
+  /*if (!birdTexture.loadFromFile("pidgey.png")) {
+    return -1; // Error loading image
+  }*/
   
-  int n{1000};  // choose the number of birds in the floak
+  const size_t n{1000};  // choose the number of birds in the floak
   std::vector<bd::boid> flock;
     flock.reserve(n);
 
@@ -18,7 +22,7 @@ int main() {
   std::uniform_real_distribution<float> x_distribution(0.0f, 800.0f);  // choose the distribution for x
   std::uniform_real_distribution<float> y_distribution(0.0f, 600.0f); // and y coordinates of boids
 
-  for (int i{0}; i < n; ++i) {
+  for (size_t i{0}; i < n; ++i) {
         float x = x_distribution(eng);
         float y = y_distribution(eng);
         flock.emplace_back(x, y);  // add boid to the flock

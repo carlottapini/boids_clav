@@ -12,17 +12,19 @@ namespace bd
     class boid {
         private:
         std::vector <double> v;  //speed
-        sf::CircleShape shape;  //graphic representation of bird
+        sf::Texture birdTexture;  //graphic representation of bird
 
         public:
         boid(float x, float y) {
-            shape.setRadius(5.0);  //sets bird size
-            shape.setFillColor(sf::Color::Black);  //bird color
-            shape.setPosition(x, y);  //starting position
+        sf::Sprite birdSprite;
+        birdSprite.setTexture(birdTexture);
+        birdSprite.setPosition(x,y);
+        birdSprite.setScale(0.1f,0.1f);
+
         }
 
         void draw (sf::RenderWindow& window) {
-            window.draw(shape); //draws birds on window
+            window.draw(birdTexture); //draws birds on window
         }
     };
 }
