@@ -9,11 +9,12 @@ int main() {
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   window.setPosition(sf::Vector2i(280, 50));  // move the window
 
-  /*if (!birdTexture.loadFromFile("pidgey.png")) {
+  /*
+  if (!birdTexture.loadFromFile("pidgey.png")) {
     return -1; // Error loading image
   }*/
   
-  const size_t n{1000};  // choose the number of birds in the floak
+  const size_t n{100};  // choose the number of birds in the floak
   std::vector<bd::boid> flock;
     flock.reserve(n);
 
@@ -40,7 +41,6 @@ int main() {
   // clear the window with chosen color (red, green, blue)
   window.clear(sf::Color(145, 224, 255));
 
-  // draw everything here...
   // draw the flock of n boids
   for (auto& bird : flock) {
             bird.draw(window);
