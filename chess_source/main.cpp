@@ -20,8 +20,8 @@ int main() {
 
   std::random_device rd; //creates engine
   std::default_random_engine eng {rd()}; //gives different seed each time
-  std::uniform_real_distribution<float> x_distribution(0.0f, 800.0f);  // choose the distribution for x
-  std::uniform_real_distribution<float> y_distribution(0.0f, 600.0f); // and y coordinates of boids
+  std::uniform_real_distribution<float> x_distribution(0.0f, 750.0f);  // choose the distribution for x
+  std::uniform_real_distribution<float> y_distribution(0.0f, 550.0f); // and y coordinates of boids
 
   for (size_t i{0}; i < n; ++i) {
         float x = x_distribution(eng);
