@@ -25,12 +25,6 @@ namespace bd
             window.draw(shape); //draws birds on window
         }
     };
-
-    class flock {
-        private:
-
-        public:
-    };
 }
 
 #endif

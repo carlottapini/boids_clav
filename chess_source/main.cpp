@@ -8,6 +8,21 @@ int main() {
       sf::VideoMode(800, 600), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   window.setPosition(sf::Vector2i(280, 50));  // move the window
+  
+  int n{1000};  // choose the number of birds in the floak
+  std::vector<bd::boid> flock;
+    flock.reserve(n);
+
+  std::random_device rd; //creates engine
+  std::default_random_engine eng {rd()}; //gives different seed each time
+  std::uniform_real_distribution<float> x_distribution(0.0f, 800.0f);  // choose the distribution for x
+  std::uniform_real_distribution<float> y_distribution(0.0f, 600.0f); // and y coordinates of boids
+
+  for (int i{0}; i < n; ++i) {
+        float x = x_distribution(eng);
+        float y = y_distribution(eng);
+        flock.emplace_back(x, y);  // add boid to the flock
+    }
   // run the program as long as the window is open
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
@@ -18,33 +33,17 @@ int main() {
       if (event.type == sf::Event::Closed) window.close();
     }
 
-    // clear the window with chosen color (red, green, blue)
+  // clear the window with chosen color (red, green, blue)
   window.clear(sf::Color(145, 224, 255));
 
-    // draw everything here...
-  int n{1000};  // choose the number of birds in the floak
-
-  std::random_device rd; //creates engine
-  std::default_random_engine eng {rd()}; //gives different seed each time
-  std::uniform_real_distribution<float> x_distribution(0.0f, 800.0f);  // choose the distribution for x
-  std::uniform_real_distribution<float> y_distribution(0.0f, 600.0f); // and y coordinates of boids
-
+  // draw everything here...
   // draw the flock of n boids
-  for (int i{0}; i < n; ++i) {
-    float x = x_distribution(eng);
-    float y = y_distribution(eng);
-    bd::boid bird(x, y);
-    bird.draw(window);
-  }
+  for (auto& bird : flock) {
+            bird.draw(window);
+        }
 
   // end the current frame
   window.display();
-
-  //change initial condition for next program running
-  x_distribution.reset();
-  y_distribution.reset();
-
-}
-
+  }
   return 0;
 }
