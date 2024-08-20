@@ -8,10 +8,10 @@
 #include <vector>
 
 namespace bd {
-class boid {
+class boid : public sf::Transformable{
  private:
   std::vector<double> v;  // speed
-  sf::Texture birdTexture;
+  sf::Texture birdTexture; 
   sf::Sprite birdSprite;  // graphic representation of bird
 
  public:
@@ -24,6 +24,10 @@ class boid {
 
   void draw(sf::RenderWindow& window) {
     window.draw(birdSprite);  // draws birds on window
+  }
+
+  void move(float v_x, float v_y){
+    birdSprite.move( v_x, v_y);
   }
 };
 }  // namespace bd

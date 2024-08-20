@@ -44,6 +44,7 @@ int main() {
   // draw the flock of n boids
   for (auto& bird : flock) {
             bird.draw(window);
+            bird.move (0.05f, 0.05f);
         }
 
   // end the current frame
