@@ -10,26 +10,41 @@
 namespace bd {
 class boid : public sf::Transformable{
  private:
-  std::vector<double> v;  // speed
+  sf::Vector2f position; //boid position 
+  sf::Vector2f v;  // speed
   sf::Texture birdTexture; 
   sf::Sprite birdSprite;  // graphic representation of bird
 
  public:
-  boid(float x, float y) {
+ //boid constructor
+  boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), v(sp) {
     birdTexture.loadFromFile("pidgey.png");
     birdSprite.setTexture(birdTexture);
-    birdSprite.setPosition(x, y);
-    birdSprite.setScale(0.1f, 0.1f);
+    birdSprite.setPosition(pos);
+    birdSprite.setScale(0.05f, 0.05f);
   }
+
+  
 
   void draw(sf::RenderWindow& window) {
     window.draw(birdSprite);  // draws birds on window
   }
 
-  void move(float v_x, float v_y){
-    birdSprite.move( v_x, v_y);
+  void move(){
+    birdSprite.move(v);
   }
 };
+
+sf::Vector2f GenerateRdmSpeed (float vmax) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-vmax, vmax);
+
+    float vx{dis(gen)};
+    float vy{dis(gen)};
+
+  return sf::Vector2f (vx, vy);
+  }
 }  // namespace bd
 
 #endif
