@@ -3,36 +3,52 @@
 #include "boids.hpp"
 
 int main() {
-  // create the window
+  const size_t height{600};
+  const size_t width{800};
+
+  // create the window and set its position.
   sf::RenderWindow window(
-      sf::VideoMode(800, 600), "birds simulation",
+      sf::VideoMode(width, height), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  window.setPosition(sf::Vector2i(280, 50));  // move the window
+  window.setPosition(sf::Vector2i(280, 50));
 
   /*
   if (!birdTexture.loadFromFile("pidgey.png")) {
     return -1; // Error loading image
   }*/
 
-  // choose the number of birds in the floak
+  // let the user choose the number of birds in the floak.
   size_t n{};
   std::cout << "Insert number of birds\n";
   std::cin >> n;
 
-  std::vector<bd::boid> flock;
-    flock.reserve(n);
+  // create a vector containing all the boids.
+  std::vector<bd::boid> birds;
+  birds.reserve(n);
 
+  // set the boids' maximum initial speed.
   const float maxSpeed = 0.05f;
-  std::random_device rd; //creates engine
-  std::default_random_engine eng {rd()}; //gives different seed each time
-  std::uniform_real_distribution<float> x_distribution(0.0f, 750.0f);  // choose the distribution for x
-  std::uniform_real_distribution<float> y_distribution(0.0f, 550.0f); // and y coordinates of boids
-  
+
+  // create two random mumber generetors, each for boids' initial x and y
+  // coordinates
+  std::random_device rd;                 // create the engine
+  std::default_random_engine eng{rd()};  // give different seed each time
+  std::uniform_real_distribution<float> x_distribution(
+      0.0f, width - 50.0f);  // set the range for x values, extracted with a
+                             // uniform distribution
+  std::uniform_real_distribution<float> y_distribution(
+      0.0f, height - 50.f);  // set the range for y values, extracted with a
+                             // uniform distribution
+
+  // fill the birds vector with boids
   for (size_t i{0}; i < n; ++i) {
+    // initialize the initials position and velocity vectors for each boid
     sf::Vector2f initialPosition(x_distribution(eng), y_distribution(eng));
     sf::Vector2f initialVelocity = bd::GenerateRdmSpeed(maxSpeed);
-    flock.emplace_back(initialPosition, initialVelocity);  // add boid to the flock
+    // add boid to the flock
+    birds.emplace_back(initialPosition, initialVelocity);
   }
+
   // run the program as long as the window is open
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
@@ -43,17 +59,18 @@ int main() {
       if (event.type == sf::Event::Closed) window.close();
     }
 
-  // clear the window with chosen color (red, green, blue)
-  window.clear(sf::Color(145, 224, 255));
-  
-  // draw the flock of n boids
-  for (auto& bird : flock) {
-            window.draw(bird);
-            bird.move();
-        }  
+    // clear the window with chosen color (red, green, blue)
+    window.clear(sf::Color(145, 224, 255));
 
-  // end the current frame
-  window.display();
+    // draw each boid of birds vector 
+    for (auto& bird : birds) {
+      window.draw(bird);
+      bird.move();
+      bird.pacman_effect(width, height);
+    }
+
+    // end the current frame
+    window.display();
   }
   return 0;
 }
