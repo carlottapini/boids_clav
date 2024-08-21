@@ -32,6 +32,19 @@ class boid : public sf::Drawable, public sf::Transformable {
   void move() { 
     birdSprite.move(velocity);     
     }
+  
+  void pacman_effect (float wid, float hei) { //updates boid position
+    sf::Vector2f curr_pos=birdSprite.getPosition();
+    if (curr_pos.x > wid) //boid too dx
+      birdSprite.setPosition(0.0f, curr_pos.y);
+    else if (curr_pos.x < 0) //boid too sx
+      birdSprite.setPosition(wid, curr_pos.y);
+
+    if (curr_pos.y > hei) //boid too low
+      birdSprite.setPosition(curr_pos.x, 0.0f);
+    else if (curr_pos.y < 0) // boid too high
+      birdSprite.setPosition(curr_pos.x, hei);
+  }
 };
 
 sf::Vector2f GenerateRdmSpeed(float vmax) {
