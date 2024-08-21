@@ -2,11 +2,11 @@
 #define BOIDS_HPP
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <random>
 #include <vector>
-#include <cmath>
 
 namespace bd {
 class boid : public sf::Drawable, public sf::Transformable {
@@ -15,6 +15,7 @@ class boid : public sf::Drawable, public sf::Transformable {
   sf::Vector2f velocity;  // speed
   sf::Texture birdTexture;
   sf::Sprite birdSprite;  // graphic representation of bird
+  float angle_;
 
  public:
   // boid constructor
@@ -22,16 +23,32 @@ class boid : public sf::Drawable, public sf::Transformable {
     birdTexture.loadFromFile("pidgey.png");
     birdSprite.setTexture(birdTexture);
     birdSprite.setPosition(position);
-    birdSprite.setScale(0.05f, 0.05f);
+    compute_angle(angle_);
+    birdSprite.setRotation(angle_);
   }
 
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+  void compute_angle(float& angle) {
+    if (velocity.x > 0) {
+      birdSprite.setScale(0.03f, 0.03f);
+      angle = -12.5f + (180 / (static_cast<float>(M_PI))) *
+                           atanf(velocity.y / velocity.x);
+    } else if (velocity.x < 0) {
+      birdSprite.setScale(-0.03f, 0.03f);
+      angle = 12.5f + (180 / (static_cast<float>(M_PI))) *
+                          atanf(velocity.y / velocity.x);
+    } else if (velocity.x == 0 && velocity.y > 0) {
+      angle += 90.f;
+    } else if (velocity.x == 0 && velocity.y < 0) {
+      angle += -90.f;
+    }
+  }
+
+  virtual void draw(sf::RenderTarget& target,
+                    sf::RenderStates states) const override {
     target.draw(birdSprite, states);  // draws birds on window
   }
 
-  void move() { 
-    birdSprite.move(velocity);     
-    }
+  void move() { birdSprite.move(velocity); }
 };
 
 sf::Vector2f GenerateRdmSpeed(float vmax) {

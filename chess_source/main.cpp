@@ -22,7 +22,7 @@ int main() {
   std::vector<bd::boid> flock;
     flock.reserve(n);
 
-  const float maxSpeed = 0.1f;
+  const float maxSpeed = 0.05f;
   std::random_device rd; //creates engine
   std::default_random_engine eng {rd()}; //gives different seed each time
   std::uniform_real_distribution<float> x_distribution(0.0f, 750.0f);  // choose the distribution for x
