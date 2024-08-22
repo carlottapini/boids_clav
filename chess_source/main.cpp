@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 #include "boids.hpp"
 
 int main() {

@@ -23,6 +23,7 @@ class boid : public sf::Drawable, public sf::Transformable {
   boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), velocity(sp) {
     birdTexture.loadFromFile("pidgey.png");
     birdSprite.setTexture(birdTexture);
+    birdSprite.setOrigin(297.5f, 281.f);
     birdSprite.setPosition(position);
     compute_angle(angle_);
     birdSprite.setRotation(angle_);
@@ -30,57 +31,22 @@ class boid : public sf::Drawable, public sf::Transformable {
 
   // calculate the angle in oder to make the boid alligned to the direction of
   // its displacement.
-  void compute_angle(float& angle) {
-    if (velocity.x > 0) {
-      birdSprite.setScale(0.04f, 0.04f);
-      angle = -12.5f + (180 / (static_cast<float>(M_PI))) *
-                           atanf(velocity.y / velocity.x);
-    } else if (velocity.x < 0) {
-      birdSprite.setScale(-0.04f, 0.04f);
-      angle = 12.5f + (180 / (static_cast<float>(M_PI))) *
-                          atanf(velocity.y / velocity.x);
-    } else if (velocity.x == 0 && velocity.y > 0) {
-      angle += 90.f;
-    } else if (velocity.x == 0 && velocity.y < 0) {
-      angle += -90.f;
-    }
-  }
+  void compute_angle(float& angle); //declaration
 
   // allow boids to be drawn.
   virtual void draw(sf::RenderTarget& target,
-                    sf::RenderStates states) const override {
-    target.draw(birdSprite, states);
-  }
+                    sf::RenderStates states) const override;  //declaration
 
   // make the boids move.
-  void move() { birdSprite.move(velocity); }
+  void move(); //declaration
 
   // let the boids reappear on the opposite side of the window if they try to
   // leave it.
-  void pacman_effect(float wid, float hei) {
-    sf::Vector2f curr_pos = birdSprite.getPosition();
-    if (curr_pos.x > wid)
-      birdSprite.setPosition(0.0f, curr_pos.y);
-    else if (curr_pos.x < 0)
-      birdSprite.setPosition(wid, curr_pos.y);
-    if (curr_pos.y > hei)
-      birdSprite.setPosition(curr_pos.x, 0.0f);
-    else if (curr_pos.y < 0)
-      birdSprite.setPosition(curr_pos.x, hei);
-  }
+  void pacman_effect(float wid, float hei);
 };
 
 // create a generetor of random velocity vector.
-sf::Vector2f GenerateRdmSpeed(float vmax) {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<float> dis(-vmax, vmax);
+sf::Vector2f GenerateRdmSpeed(float vmax); //declaration
 
-  float vx{dis(gen)};
-  float vy{dis(gen)};
-
-  return sf::Vector2f(vx, vy);
 }
-} 
-
 #endif
