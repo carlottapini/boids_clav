@@ -47,4 +47,12 @@ void bd::boid::compute_angle(float& angle) {
     else if (curr_pos.y < 0)
       birdSprite.setPosition(curr_pos.x, hei);
   }
+
+  bool bd::boid::near(boid const& b_1, boid const& b_2, float const& d) {
+    if (std::hypot((b_1.position.x - b_2.position.x), (b_1.position.y - b_2.position.y)) < d) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
