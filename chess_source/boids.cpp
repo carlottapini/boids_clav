@@ -1,8 +1,7 @@
 #include "boids.hpp"
 
 namespace bd {
-    // creates a random generator for velocity vector.
-    sf::Vector2f GenerateRdmSpeed(float vmax) {
+  sf::Vector2f GenerateRdmSpeed(float vmax) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> dis(-vmax, vmax);
@@ -11,7 +10,19 @@ namespace bd {
     float vy{dis(gen)};
 
     return sf::Vector2f(vx, vy);
-}
+  }
+
+void pacman_effect(float wid, float hei, boid curr_boid) {
+    sf::Vector2f curr_pos = curr_boid.getPosition();
+    if (curr_pos.x > wid)
+      curr_boid.setPosition(0.0f, curr_pos.y);
+    else if (curr_pos.x < 0)
+      curr_boid.setPosition(wid, curr_pos.y);
+    if (curr_pos.y > hei)
+      curr_boid.setPosition(curr_pos.x, 0.0f);
+    else if (curr_pos.y < 0)
+      curr_boid.setPosition(curr_pos.x, hei);
+  }
 
 void bd::boid::compute_angle(float& angle) {
     if (velocity.x > 0) {
@@ -35,18 +46,6 @@ void bd::boid::compute_angle(float& angle) {
   }
 
   void bd::boid::move() { birdSprite.move(velocity); }
-
-  void pacman_effect(float wid, float hei, boid curr_boid) {
-    sf::Vector2f curr_pos = curr_boid.getPosition();
-    if (curr_pos.x > wid)
-      curr_boid.setPosition(0.0f, curr_pos.y);
-    else if (curr_pos.x < 0)
-      curr_boid.setPosition(wid, curr_pos.y);
-    if (curr_pos.y > hei)
-      curr_boid.setPosition(curr_pos.x, 0.0f);
-    else if (curr_pos.y < 0)
-      curr_boid.setPosition(curr_pos.x, hei);
-  }
 
   bool bd::boid::near(boid const& b_1, boid const& b_2, float const& d) {
     if (std::hypot((b_1.position.x - b_2.position.x), (b_1.position.y - b_2.position.y)) < d) {
