@@ -17,8 +17,21 @@ int main() {
 
   // let the user choose the number of birds in the floak.
   size_t n{};
-  std::cout << "Insert number of birds\n";
+  std::cout << "Insert number of birds [n > 1]\nn:";
   std::cin >> n;
+
+  size_t d{};
+  std::cout << "\nInsert distance at which a boid is considered near another "
+               "[d > 300]\nd:";
+  std::cin >> d;
+
+  size_t d_s{};
+  std::cout << "\nInsert range for the law of separation[300 < d_s < d]\nd_s:";
+  std::cin >> d_s;
+
+  size_t s{};
+  std::cout << "\nInsert repultion intensity [s > 0]\ns:";
+  std::cin >> s;
 
   // create a vector containing all the boids.
   std::vector<bd::boid> birds;
@@ -60,11 +73,12 @@ int main() {
     // clear the window with chosen color (red, green, blue)
     window.clear(sf::Color(145, 224, 255));
 
-    // draw each boid of birds vector 
+    // draw each boid of birds vector
     for (auto& bird : birds) {
       window.draw(bird);
       bird.move();
-      pacman_effect(width, height, bird);
+      bird.pacman_effect(width, height);
+      bird.getVelocity() = bird.getVelocity() + bird.separation(birds,d_s, s);
     }
 
     // end the current frame
