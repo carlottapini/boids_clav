@@ -64,7 +64,7 @@ int main() {
     for (auto& bird : birds) {
       window.draw(bird);
       bird.move();
-      bird.pacman_effect(width, height);
+      pacman_effect(width, height, bird);
     }
 
     // end the current frame

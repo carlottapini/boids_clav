@@ -36,16 +36,16 @@ void bd::boid::compute_angle(float& angle) {
 
   void bd::boid::move() { birdSprite.move(velocity); }
 
-  void bd::boid::pacman_effect(float wid, float hei) {
-    sf::Vector2f curr_pos = birdSprite.getPosition();
+  void pacman_effect(float wid, float hei, boid curr_boid) {
+    sf::Vector2f curr_pos = curr_boid.getPosition();
     if (curr_pos.x > wid)
-      birdSprite.setPosition(0.0f, curr_pos.y);
+      curr_boid.setPosition(0.0f, curr_pos.y);
     else if (curr_pos.x < 0)
-      birdSprite.setPosition(wid, curr_pos.y);
+      curr_boid.setPosition(wid, curr_pos.y);
     if (curr_pos.y > hei)
-      birdSprite.setPosition(curr_pos.x, 0.0f);
+      curr_boid.setPosition(curr_pos.x, 0.0f);
     else if (curr_pos.y < 0)
-      birdSprite.setPosition(curr_pos.x, hei);
+      curr_boid.setPosition(curr_pos.x, hei);
   }
 
   bool bd::boid::near(boid const& b_1, boid const& b_2, float const& d) {

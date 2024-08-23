@@ -42,14 +42,14 @@ class boid : public sf::Drawable, public sf::Transformable {
 
   // check if one boid is near to another one.
   bool near(boid const& b_1, boid const& b_2, float const& d);
-
-  // let the boids reappear on the opposite side of the window if they try to
-  // leave it.
-  void pacman_effect(float wid, float hei);
 };
 
 // create a generetor of random velocity vector.
 sf::Vector2f GenerateRdmSpeed(float vmax); //declaration
+
+// let the boids reappear on the opposite side of the window if they try to
+// leave it.
+void pacman_effect(float wid, float hei, boid curr_boid); //declaration
 
 }
 #endif
