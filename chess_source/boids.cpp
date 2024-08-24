@@ -12,25 +12,55 @@ sf::Vector2f GenerateRdmSpeed(float vmax) {
   return sf::Vector2f(vx, vy);
 }
 
-void boid::pacman_effect(float wid, float hei) {
-  sf::Vector2f curr_pos = birdSprite.getPosition();
+void pacman_effect(float wid, float hei, boid& curr_boid) {
+  sf::Vector2f curr_pos = curr_boid.getPosition();
   if (curr_pos.x > wid)
-    birdSprite.setPosition(0.0f, curr_pos.y);
+    curr_boid.setPosition(0.0f, curr_pos.y);
   else if (curr_pos.x < 0)
-    birdSprite.setPosition(wid, curr_pos.y);
+    curr_boid.setPosition(wid, curr_pos.y);
   if (curr_pos.y > hei)
-    birdSprite.setPosition(curr_pos.x, 0.0f);
+    curr_boid.setPosition(curr_pos.x, 0.0f);
   else if (curr_pos.y < 0)
-    birdSprite.setPosition(curr_pos.x, hei);
+    curr_boid.setPosition(curr_pos.x, hei);
 }
 
-void boid::compute_angle(float& angle) {
+std::vector<boid*> near_boids(std::vector<boid>& all_boids, const boid& b_0,
+                              float const& d) {
+  std::vector<boid*> flock;
+  for (auto& other : all_boids) {
+    if (near(other, b_0, d)) {
+      flock.push_back(&other);
+    }
+  }
+  return flock;
+}
+
+sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
+                        float const& d_s, float const& s) {
+  sf::Vector2f sum(0.0f, 0.0f);
+  std::vector<boid*> near_b_i = near_boids(all_boids, b_i, d_s);
+  for (auto& b_j : near_b_i) {
+    sf::Vector2f diff = (b_j->getPosition() - b_i.getPosition());
+    float distance = std::hypot(diff.x, diff.y);
+    if (distance != 0) {
+      sum += (diff);
+    }
+  }
+  if (sum.x != 0 && sum.y != 0) {
+    return -(s * sum);
+  } else {
+    return sum;
+  }
+}
+
+void boid::compute_angle() {
+  float angle = 0.0f;
   if (velocity.x > 0) {
-    birdSprite.setScale(0.04f, 0.04f);
+    setScale(0.04f, 0.04f);
     angle = -12.5f +
             (180 / (static_cast<float>(M_PI))) * atanf(velocity.y / velocity.x);
   } else if (velocity.x < 0) {
-    birdSprite.setScale(-0.04f, 0.04f);
+    setScale(-0.04f, 0.04f);
     angle = 12.5f +
             (180 / (static_cast<float>(M_PI))) * atanf(velocity.y / velocity.x);
   } else if (velocity.x == 0 && velocity.y > 0) {
@@ -38,15 +68,20 @@ void boid::compute_angle(float& angle) {
   } else if (velocity.x == 0 && velocity.y < 0) {
     angle += -90.f;
   }
+  setRotation(angle);
 }
 
 void boid::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+  states.transform *= getTransform();
+  states.texture = &birdTexture;
   target.draw(birdSprite, states);
 }
 
-void boid::move() { birdSprite.move(velocity); }
+sf::Vector2f boid::getVelocity() const { return this->velocity; }
 
-sf::Vector2f boid::getVelocity() { return velocity; }
+void boid::setVelocity(const sf::Vector2f& new_velocity) {
+  velocity = new_velocity;
+}
 
 bool near(boid const& b_1, boid const& b_2, float const& d) {
   float const s = std::hypot((b_1.getPosition().x - b_2.getPosition().x),
@@ -56,28 +91,6 @@ bool near(boid const& b_1, boid const& b_2, float const& d) {
   } else {
     return false;
   }
-}
-
-std::vector<boid*> boid::near_boids(std::vector<boid>& all_boids,
-                              float const& d) const {
-  std::vector<boid*> flock;
-  for (auto& other : all_boids) {
-    if (near(other, *this, d)) {
-      flock.push_back(&other);
-    }
-  }
-  return flock;
-}
-
-sf::Vector2f boid::separation(std::vector<boid>& all_boids,
-                        float const& d_s, float const& s) {
-  sf::Vector2f v_1;
-  sf::Vector2f sum;
-  std::vector<boid*> near_b_i{this->near_boids(all_boids, d_s)};
-  for (auto& b_j : near_b_i) {
-    sum += (b_j->position- this->position);
-  }
-  return v_1 = -s * sum;
 }
 
 }  // namespace bd

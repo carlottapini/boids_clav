@@ -16,54 +16,48 @@ class boid : public sf::Drawable, public sf::Transformable {
   sf::Vector2f velocity;    // boid velocity.
   sf::Texture birdTexture;  // boid texture.
   sf::Sprite birdSprite;    // graphic representation of boid.
-  float angle_;             // angle rotation for the representation of boid.
 
  public:
   // boid constructor.
   boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), velocity(sp) {
     birdTexture.loadFromFile("pidgey.png");
     birdSprite.setTexture(birdTexture);
-    birdSprite.setOrigin(297.5f, 281.f);
-    birdSprite.setPosition(position);
-    compute_angle(angle_);
-    birdSprite.setRotation(angle_);
+    setOrigin(297.5f, 281.f);
+    setPosition(position);
   }
 
   // calculate the angle in oder to make the boid alligned to the direction of
   // its displacement.
-  void compute_angle(float& angle);  // declaration
+  void compute_angle();  // declaration
 
   // allow boids to be drawn.
   virtual void draw(sf::RenderTarget& target,
                     sf::RenderStates states) const override;  // declaration
 
-  // make the boids move.
-  void move();  // declaration
+  // get the velocity vector of a boid
+  sf::Vector2f getVelocity() const;
 
-  // get the velocity of a boid
-  sf::Vector2f getVelocity();
-
-  // let the boids reappear on the opposite side of the window if they try to
-  // leave it.
-  void pacman_effect(float wid, float hei);  // declaration
-
-  // create a vector of boids near to a given one.
-std::vector<boid*> near_boids(std::vector<boid>& all_boids,
-                              float const& d) const;
-
-// law of separation.
-sf::Vector2f separation(std::vector<boid>& all_boids,
-                        float const& d_s, float const& s);
+  // set the velocity vector of a boid
+  void setVelocity(const sf::Vector2f& new_velocity);
 };
 
 // create a generetor of random velocity vector.
 sf::Vector2f GenerateRdmSpeed(float vmax);  // declaration
 
+// let the boids reappear on the opposite side of the window if they try to
+// leave it.
+void pacman_effect(float wid, float hei, boid& curr_boid);  // declaration
+
 // check if one boid is near to another one.
 bool near(boid const& b_1, boid const& b_2, float const& d);  // declaration
 
+// create a vector of boids near to a given one.
+std::vector<boid*> near_boids(std::vector<boid>& all_boids, const boid& b_0,
+                              float const& d);
 
-
+// law of separation.
+sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
+                        float const& d_s, float const& s);
 
 }  // namespace bd
 #endif
