@@ -48,12 +48,12 @@ class boid : public sf::Drawable, public sf::Transformable {
   void pacman_effect(float wid, float hei);  // declaration
 
   // create a vector of boids near to a given one.
-std::vector<boid*> near_boids(std::vector<boid>& all_boids,
-                              float const& d) const;
+  std::vector<boid*> near_boids(std::vector<boid>& all_boids,
+                                float const& d) const;
 
-// law of separation.
-sf::Vector2f separation(std::vector<boid>& all_boids,
-                        float const& d_s, float const& s);
+  // law of separation.
+  sf::Vector2f separation(std::vector<boid>& all_boids, float const& d_s,
+                          float const& s);
 };
 
 // create a generetor of random velocity vector.
@@ -61,9 +61,5 @@ sf::Vector2f GenerateRdmSpeed(float vmax);  // declaration
 
 // check if one boid is near to another one.
 bool near(boid const& b_1, boid const& b_2, float const& d);  // declaration
-
-
-
-
 }  // namespace bd
 #endif

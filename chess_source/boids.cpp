@@ -59,7 +59,7 @@ bool near(boid const& b_1, boid const& b_2, float const& d) {
 }
 
 std::vector<boid*> boid::near_boids(std::vector<boid>& all_boids,
-                              float const& d) const {
+                                    float const& d) const {
   std::vector<boid*> flock;
   for (auto& other : all_boids) {
     if (near(other, *this, d)) {
@@ -69,13 +69,13 @@ std::vector<boid*> boid::near_boids(std::vector<boid>& all_boids,
   return flock;
 }
 
-sf::Vector2f boid::separation(std::vector<boid>& all_boids,
-                        float const& d_s, float const& s) {
+sf::Vector2f boid::separation(std::vector<boid>& all_boids, float const& d_s,
+                              float const& s) {
   sf::Vector2f v_1;
   sf::Vector2f sum;
   std::vector<boid*> near_b_i{this->near_boids(all_boids, d_s)};
   for (auto& b_j : near_b_i) {
-    sum += (b_j->position- this->position);
+    sum += (b_j->position - this->position);
   }
   return v_1 = -s * sum;
 }

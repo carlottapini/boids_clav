@@ -78,7 +78,7 @@ int main() {
       window.draw(bird);
       bird.move();
       bird.pacman_effect(width, height);
-      bird.getVelocity() = bird.getVelocity() + bird.separation(birds,d_s, s);
+      bird.getVelocity() = bird.getVelocity() + bird.separation(birds, d_s, s);
     }
 
     // end the current frame
