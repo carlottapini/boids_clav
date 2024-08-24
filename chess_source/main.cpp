@@ -38,7 +38,7 @@ int main() {
   birds.reserve(n);
 
   // set the boids' maximum initial speed.
-  const float maxSpeed = 0.6f;
+  const float maxSpeed = 0.1f;
 
   // create two random mumber generetors, each for boids' initial x and y
   // coordinates
@@ -87,16 +87,17 @@ int main() {
       prova.setPosition(bird.getPosition());
       prova.setFillColor(sf::Color(0, 0, 0, 50));
       if (!near_boids(birds, bird, d_s).empty()) {
-        prova.setFillColor(sf::Color(255, 0, 0, 200));
+        prova.setFillColor(sf::Color(255, 0, 0, 50));
       }
       window.draw(prova);
 
       sf::Vertex line[] = {
           sf::Vertex(bird.getPosition()),
-          sf::Vertex(bird.getPosition() + 10000.f * bird.getVelocity())};
+          sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
 
       window.draw(line, 2, sf::Lines);
       ;
+
     }
 
     // end the current frame
