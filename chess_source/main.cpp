@@ -20,16 +20,16 @@ int main() {
   std::cout << "Insert number of birds [n > 1]\nn:";
   std::cin >> n;
 
-  size_t d{};
+  float d{};
   std::cout << "\nInsert distance at which a boid is considered near another "
                "[d > 300]\nd:";
   std::cin >> d;
 
-  size_t d_s{};
+  float d_s{};
   std::cout << "\nInsert range for the law of separation[300 < d_s < d]\nd_s:";
   std::cin >> d_s;
 
-  size_t s{};
+  float s{};
   std::cout << "\nInsert repultion intensity [s > 0]\ns:";
   std::cin >> s;
 
@@ -38,7 +38,7 @@ int main() {
   birds.reserve(n);
 
   // set the boids' maximum initial speed.
-  const float maxSpeed = 0.01f;
+  const float maxSpeed = 0.6f;
 
   // create two random mumber generetors, each for boids' initial x and y
   // coordinates

@@ -40,14 +40,16 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
   sf::Vector2f sum(0.0f, 0.0f);
   std::vector<boid*> near_b_i = near_boids(all_boids, b_i, d_s);
   for (auto& b_j : near_b_i) {
-    sf::Vector2f diff = (b_j->getPosition() - b_i.getPosition());
+    sf::Vector2f diff = (b_i.getPosition() - b_j->getPosition());
     float distance = std::hypot(diff.x, diff.y);
-    if (distance != 0) {
-      sum += (diff);
+    if (distance > 0) {
+      diff /= distance; //normalizes diff.
+      sum += (diff/distance);
     }
   }
   if (sum.x != 0 && sum.y != 0) {
-    return -(s * sum);
+    sum /= static_cast<float>(near_b_i.size());  // mean of forces
+    return -(s * sum);  // Scala la forza con l'indice di repulsione e inverti la direzione
   } else {
     return sum;
   }
