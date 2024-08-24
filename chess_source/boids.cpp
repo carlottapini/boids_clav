@@ -41,10 +41,7 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
   std::vector<boid*> near_b_i = near_boids(all_boids, b_i, d_s);
   for (auto& b_j : near_b_i) {
     sf::Vector2f diff = (b_j->getPosition() - (b_i.getPosition()));
-    float distance = std::hypot(diff.x, diff.y);
-    if (distance > 0) {
-      sum += (diff / (distance * distance));
-    }
+    sum += (diff);
   }
   if (sum.x != 0 && sum.y != 0) {
     // sum /= static_cast<float>(near_b_i.size());  // mean of forces
@@ -53,6 +50,14 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
   } else {
     return sum;
   }
+}
+
+void limitVelocity(boid& crazy_boid, const float& max_speed) {
+  sf::Vector2f v = crazy_boid.getVelocity();
+  float v_module = std::hypot(v.x, v.y);
+  if (v_module > max_speed) {
+    crazy_boid.setVelocity(max_speed * (v / v_module));
+  };
 }
 
 void boid::compute_angle() {

@@ -59,5 +59,8 @@ std::vector<boid*> near_boids(std::vector<boid>& all_boids, const boid& b_0,
 sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
                         float const& d_s, float const& s);
 
+// set a limit to the velocity of a boid.
+void limitVelocity(boid& crazy_boid, const float& max_speed);
+
 }  // namespace bd
 #endif

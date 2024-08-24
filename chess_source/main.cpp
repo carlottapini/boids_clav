@@ -81,6 +81,7 @@ int main() {
       bird.compute_angle();
       bird.setVelocity(bird.getVelocity() +
                        bd::separation(birds, bird, d_s, s));
+      bd::limitVelocity(bird, maxSpeed);
 
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
@@ -97,7 +98,6 @@ int main() {
 
       window.draw(line, 2, sf::Lines);
       ;
-
     }
 
     // end the current frame
