@@ -44,7 +44,7 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
     sum += (diff);
   }
   if (sum.x != 0 && sum.y != 0) {
-    return -(s * sum);  
+    return -(s * sum);
   } else {
     return sum;
   }
@@ -66,8 +66,9 @@ sf::Vector2f alignment(std::vector<boid>& all_boids, const boid& b_i,
   for (auto& b_j : near_b_i) {
     sum_velocity_j += b_j->getVelocity();
   }
-  mean_velocity_j = (sum_velocity_j) / static_cast<float>(near_b_i.size() - 1);
-  if (mean_velocity_j.x != 0 && mean_velocity_j.y != 0) {
+  if (near_b_i.size() > 1) {
+    mean_velocity_j =
+        (sum_velocity_j) / static_cast<float>(near_b_i.size() - 1);
     return a * (mean_velocity_j - b_i.getVelocity());
   } else
     return mean_velocity_j;

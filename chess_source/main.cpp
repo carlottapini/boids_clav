@@ -85,11 +85,11 @@ int main() {
       pacman_effect(width, height, bird);
       bird.compute_angle();
       bird.setVelocity(bird.getVelocity() +
-                       bd::separation(birds, bird, d_s, s));
-      bd::limitVelocity(bird, maxSpeed);
-      bird.setVelocity(bird.getVelocity() + bd::alignment(birds, bird, d, a));
+                       bd::separation(birds, bird, d_s, s) +
+                       bd::alignment(birds, bird, d, a));
       bd::limitVelocity(bird, maxSpeed);
 
+      /*
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
       prova.setPosition(bird.getPosition());
@@ -114,6 +114,7 @@ int main() {
 
       window.draw(line, 2, sf::Lines);
       ;
+      */
     }
 
     // end the current frame
