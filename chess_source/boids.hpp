@@ -62,5 +62,7 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
 // set a limit to the velocity of a boid.
 void limitVelocity(boid& crazy_boid, const float& max_speed);
 
+sf::Vector2f alignment(std::vector<boid>& all_boids, const boid& b_i, float const& d, float const& a);
+
 }  // namespace bd
 #endif

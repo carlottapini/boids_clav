@@ -33,6 +33,11 @@ int main() {
   std::cout << "\nInsert repultion intensity [s > 0]\ns:";
   std::cin >> s;
 
+  float a{};
+  std::cout << "\nInsert alignment factor "
+               "[0 < a < 1]\na:";
+  std::cin >> a;
+
   // create a vector containing all the boids.
   std::vector<bd::boid> birds;
   birds.reserve(n);
@@ -82,6 +87,8 @@ int main() {
       bird.setVelocity(bird.getVelocity() +
                        bd::separation(birds, bird, d_s, s));
       bd::limitVelocity(bird, maxSpeed);
+      bird.setVelocity(bird.getVelocity() + bd::alignment(birds, bird, d, a));
+      bd::limitVelocity(bird, maxSpeed);
 
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
@@ -91,6 +98,15 @@ int main() {
         prova.setFillColor(sf::Color(255, 0, 0, 50));
       }
       window.draw(prova);
+
+      sf::CircleShape prov(d);
+      prov.setOrigin(d, d);
+      prov.setPosition(bird.getPosition());
+      prov.setFillColor(sf::Color(0, 0, 0, 50));
+      if (!near_boids(birds, bird, d).empty()) {
+        prov.setFillColor(sf::Color(255, 0, 0, 50));
+      }
+      window.draw(prov);
 
       sf::Vertex line[] = {
           sf::Vertex(bird.getPosition()),

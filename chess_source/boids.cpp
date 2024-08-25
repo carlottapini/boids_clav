@@ -44,9 +44,7 @@ sf::Vector2f separation(std::vector<boid>& all_boids, const boid& b_i,
     sum += (diff);
   }
   if (sum.x != 0 && sum.y != 0) {
-    // sum /= static_cast<float>(near_b_i.size());  // mean of forces
-    return -(s * sum);  // Scala la forza con l'indice di repulsione e inverti
-                        // la direzione
+    return -(s * sum);  
   } else {
     return sum;
   }
@@ -58,6 +56,21 @@ void limitVelocity(boid& crazy_boid, const float& max_speed) {
   if (v_module > max_speed) {
     crazy_boid.setVelocity(max_speed * (v / v_module));
   };
+}
+
+sf::Vector2f alignment(std::vector<boid>& all_boids, const boid& b_i,
+                       float const& d, float const& a) {
+  sf::Vector2f mean_velocity_j;
+  std::vector<boid*> near_b_i = near_boids(all_boids, b_i, d);
+  sf::Vector2f sum_velocity_j(0.0f, 0.0f);
+  for (auto& b_j : near_b_i) {
+    sum_velocity_j += b_j->getVelocity();
+  }
+  mean_velocity_j = (sum_velocity_j) / static_cast<float>(near_b_i.size() - 1);
+  if (mean_velocity_j.x != 0 && mean_velocity_j.y != 0) {
+    return a * (mean_velocity_j - b_i.getVelocity());
+  } else
+    return mean_velocity_j;
 }
 
 void boid::compute_angle() {
