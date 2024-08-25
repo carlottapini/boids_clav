@@ -38,12 +38,17 @@ int main() {
                "[0 < a < 1]\na:";
   std::cin >> a;
 
+  float c{};
+  std::cout << "\nInsert cohesion factor "
+               "[0 < c < 1]\nc:";
+  std::cin >> c;
+
   // create a vector containing all the boids.
   std::vector<bd::boid> birds;
   birds.reserve(n);
 
   // set the boids' maximum initial speed.
-  const float maxSpeed = 0.1f;
+  const float maxSpeed = 1.f;
 
   // create two random mumber generetors, each for boids' initial x and y
   // coordinates
@@ -84,12 +89,11 @@ int main() {
       bird.move(bird.getVelocity());
       pacman_effect(width, height, bird);
       bird.compute_angle();
-      bird.setVelocity(bird.getVelocity() +
-                       bd::separation(birds, bird, d_s, s) +
-                       bd::alignment(birds, bird, d, a));
+      bird.setVelocity(
+          bird.getVelocity() + bd::separation(birds, bird, d_s, s) +
+          bd::alignment(birds, bird, d, a) + bd::cohesion(birds, bird, d, c));
       bd::limitVelocity(bird, maxSpeed);
 
-      /*
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
       prova.setPosition(bird.getPosition());
@@ -113,8 +117,6 @@ int main() {
           sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
 
       window.draw(line, 2, sf::Lines);
-      ;
-      */
     }
 
     // end the current frame
