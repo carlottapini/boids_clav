@@ -48,7 +48,7 @@ int main() {
   birds.reserve(n);
 
   // set the boids' maximum initial speed.
-  const float maxSpeed = 1.f;
+  const float maxSpeed = 0.5f;
 
   // create two random mumber generetors, each for boids' initial x and y
   // coordinates
@@ -93,23 +93,24 @@ int main() {
           bird.getVelocity() + bd::separation(birds, bird, d_s, s) +
           bd::alignment(birds, bird, d, a) + bd::cohesion(birds, bird, d, c));
       bd::limitVelocity(bird, maxSpeed);
-
+      
+      
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
       prova.setPosition(bird.getPosition());
-      prova.setFillColor(sf::Color(0, 0, 0, 50));
-      if (!near_boids(birds, bird, d_s).empty()) {
+      prova.setFillColor(sf::Color(0, 0, 0, 20));
+      /*if (!near_boids(birds, bird, d_s).empty()) {
         prova.setFillColor(sf::Color(255, 0, 0, 50));
-      }
+      }*/
       window.draw(prova);
 
       sf::CircleShape prov(d);
       prov.setOrigin(d, d);
       prov.setPosition(bird.getPosition());
-      prov.setFillColor(sf::Color(0, 0, 0, 50));
-      if (!near_boids(birds, bird, d).empty()) {
+      prov.setFillColor(sf::Color(0, 0, 0, 20));
+      /*if (!near_boids(birds, bird, d).empty()) {
         prov.setFillColor(sf::Color(255, 0, 0, 50));
-      }
+      }*/
       window.draw(prov);
 
       sf::Vertex line[] = {
@@ -117,8 +118,26 @@ int main() {
           sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
 
       window.draw(line, 2, sf::Lines);
+
+      sf::Vertex line2[] = {
+          sf::Vertex(bird.getPosition(), sf::Color::Red ),
+          sf::Vertex(bird.getPosition() + 1000000.f * bd::separation(birds, bird, d_s, s), sf::Color::Red )};
+      window.draw(line2, 2, sf::Lines);
+      
+      sf::Vertex line3[] = {
+          sf::Vertex(bird.getPosition(), sf::Color::Green),
+          sf::Vertex(bird.getPosition() + 1000000.f * bd::alignment(birds, bird, d, a), sf::Color::Green)};
+
+      window.draw(line3, 2, sf::Lines);
+
+      sf::Vertex line4[] = {
+          sf::Vertex(bird.getPosition(), sf::Color::Blue ),
+          sf::Vertex(bird.getPosition() + 1000000.f * bd::cohesion(birds, bird, d, c), sf::Color::Blue)};
+
+      window.draw(line4, 2, sf::Lines);
     }
 
+    
     // end the current frame
     window.display();
   }

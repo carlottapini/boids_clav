@@ -66,12 +66,13 @@ sf::Vector2f alignment(std::vector<boid>& all_boids, const boid& b_i,
   for (auto& b_j : near_b_i) {
     sum_velocity_j += b_j->getVelocity();
   }
-  if (near_b_i.size() > 1) {
+  if (near_b_i.size() > 0) {
     mean_velocity_j =
-        (sum_velocity_j) / static_cast<float>(near_b_i.size() - 1);
+        (sum_velocity_j) / static_cast<float>(near_b_i.size());
     return a * (mean_velocity_j - b_i.getVelocity());
   } else
-    return mean_velocity_j;
+    return sf::Vector2f(0.0f, 0.0f);
+  
 }
 
 sf::Vector2f cohesion(std::vector<boid>& all_boids, const boid& b_i,
@@ -81,12 +82,14 @@ sf::Vector2f cohesion(std::vector<boid>& all_boids, const boid& b_i,
   for (auto& b_j : near_b_i) {
     c_m += b_j->getPosition();
   }
-  if (near_b_i.size() > 1) {
-    c_m /= static_cast<float>(near_b_i.size() - 1);
+  if (near_b_i.size() > 0) {
+    c_m /= static_cast<float>(near_b_i.size());
     return c * (c_m - b_i.getPosition());
   } else
     return c_m;
+  
 }
+
 
 void boid::compute_angle() {
   float angle = 0.0f;
