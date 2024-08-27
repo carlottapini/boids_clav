@@ -132,7 +132,7 @@ int main() {
         prov.setFillColor(sf::Color(255, 0, 0, 50));
       }*/
       window.draw(prov);
-
+/*
       sf::Vertex line[] = {
           sf::Vertex(bird.getPosition()),
           sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
@@ -170,7 +170,7 @@ int main() {
       std::cout << "Cohesion: (" << bd::cohesion(covey, bird, neighbors).x
                 << ", " << bd::cohesion(covey, bird, neighbors).y << ");\n";
 
-      
+      */
     }
 
     // end the current frame
