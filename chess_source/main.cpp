@@ -3,6 +3,7 @@
 int main() {
   const size_t height{600};
   const size_t width{800};
+  const size_t graph_size{500};
 
   // create the window and set its position.
   sf::RenderWindow window(
@@ -11,7 +12,7 @@ int main() {
   window.setPosition(sf::Vector2i(0, 50));
 
   sf::RenderWindow graph(
-      sf::VideoMode(height, height), "graph",
+      sf::VideoMode(graph_size, graph_size), "graph",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   graph.setPosition(sf::Vector2i(width, 50));
 
@@ -105,10 +106,10 @@ int main() {
       // "close requested" event: we close the window
       if (event.type == sf::Event::Closed) window.close();
       if (graph_event.type == sf::Event::Closed) graph.close();
-    }
-    while (graph.pollEvent(graph_event)) {
-      // "close requested" event: we close the window
-      if (graph_event.type == sf::Event::Closed) graph.close();
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+        window.close();
+        graph.close();
+      }
     }
 
     // clear the window with chosen color (red, green, blue)
@@ -212,6 +213,7 @@ int main() {
         graph.draw(bar);
       }
     }
+    
     window.display();
   }
 
