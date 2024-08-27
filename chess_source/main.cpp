@@ -57,7 +57,7 @@ int main() {
   std::cout << "\nInsert alignment factor "
                "[0 < a < 1]\na:";
   std::cin >> a;
-  assert(0 <= a );
+  assert(0 <= a);
 
   // set cohesion intensity factor.
   float c{};
@@ -87,14 +87,13 @@ int main() {
     sf::Vector2f initialPosition(x_distribution(eng), y_distribution(eng));
     sf::Vector2f initialVelocity = bd::GenerateRdmSpeed(maxSpeed);
     // add boid to the flock
-    birds.emplace_back(bd::Boid(initialPosition, initialVelocity));
+    birds.emplace_back(initialPosition, initialVelocity);
   }
 
   bd::Flock covey{birds, s, a, c};
   unsigned long frameCount = 0;
   std::vector<float> positionHistory;
   size_t maxHistorySize = 1000;
-  
 
   // run the program as long as the window is open
   while (window.isOpen() && graph.isOpen()) {
@@ -130,7 +129,6 @@ int main() {
                        bd::cohesion(covey, bird, neighbors));
       bd::limitVelocity(bird, maxSpeed);
 
-      
       sf::CircleShape prova(d_s);
       prova.setOrigin(d_s, d_s);
       prova.setPosition(bird.getPosition());
@@ -148,69 +146,74 @@ int main() {
         prov.setFillColor(sf::Color(255, 0, 0, 50));
       }*/
       window.draw(prov);
-/*
-      sf::Vertex line[] = {
-          sf::Vertex(bird.getPosition()),
-          sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
+      /*
+            sf::Vertex line[] = {
+                sf::Vertex(bird.getPosition()),
+                sf::Vertex(bird.getPosition() + 1000.f * bird.getVelocity())};
 
-      window.draw(line, 2, sf::Lines);
+            window.draw(line, 2, sf::Lines);
 
-      sf::Vertex line2[] = {
-          sf::Vertex(bird.getPosition(), sf::Color::Red),
-          sf::Vertex(bird.getPosition() +
-                         1000000.f * bd::separation(covey, bird, neighbors_s),
-                     sf::Color::Red)};
-      window.draw(line2, 2, sf::Lines);
+            sf::Vertex line2[] = {
+                sf::Vertex(bird.getPosition(), sf::Color::Red),
+                sf::Vertex(bird.getPosition() +
+                               1000000.f * bd::separation(covey, bird,
+         neighbors_s), sf::Color::Red)}; window.draw(line2, 2, sf::Lines);
 
-      sf::Vertex line3[] = {
-          sf::Vertex(bird.getPosition(), sf::Color::Green),
-          sf::Vertex(bird.getPosition() +
-                         1000000.f * bd::alignment(covey, bird, neighbors),
-                     sf::Color::Green)};
+            sf::Vertex line3[] = {
+                sf::Vertex(bird.getPosition(), sf::Color::Green),
+                sf::Vertex(bird.getPosition() +
+                               1000000.f * bd::alignment(covey, bird,
+         neighbors), sf::Color::Green)};
 
-      window.draw(line3, 2, sf::Lines);
+            window.draw(line3, 2, sf::Lines);
 
-      sf::Vertex line4[] = {
-          sf::Vertex(bird.getPosition(), sf::Color::Blue),
-          sf::Vertex(bird.getPosition() +
-                         1000000.f * bd::cohesion(covey, bird, neighbors),
-                     sf::Color::Blue)};
+            sf::Vertex line4[] = {
+                sf::Vertex(bird.getPosition(), sf::Color::Blue),
+                sf::Vertex(bird.getPosition() +
+                               1000000.f * bd::cohesion(covey, bird, neighbors),
+                           sf::Color::Blue)};
 
-      window.draw(line4, 2, sf::Lines);
+            window.draw(line4, 2, sf::Lines);
 
-      
-      std::cout << "Separation: (" << bd::separation(covey, bird, neighbors_s).x
-                << ", " << bd::separation(covey, bird, neighbors_s).y << ");\n";
-      std::cout << "Alignment: (" << bd::alignment(covey, bird, neighbors).x
-                << ", " << bd::alignment(covey, bird, neighbors).y << ");\n";
-      std::cout << "Cohesion: (" << bd::cohesion(covey, bird, neighbors).x
-                << ", " << bd::cohesion(covey, bird, neighbors).y << ");\n";
 
-      */
+            std::cout << "Separation: (" << bd::separation(covey, bird,
+         neighbors_s).x
+                      << ", " << bd::separation(covey, bird, neighbors_s).y <<
+         ");\n"; std::cout << "Alignment: (" << bd::alignment(covey, bird,
+         neighbors).x
+                      << ", " << bd::alignment(covey, bird, neighbors).y <<
+         ");\n"; std::cout << "Cohesion: (" << bd::cohesion(covey, bird,
+         neighbors).x
+                      << ", " << bd::cohesion(covey, bird, neighbors).y <<
+         ");\n";
+
+            */
     }
 
     // end the current frame
-    
+
     ++frameCount;
-    if(frameCount%500 == 0){
+    if (frameCount % 500 == 0) {
       float avgPosition = bd::Mean_Position(covey);
       if (positionHistory.size() >= maxHistorySize) {
-            positionHistory.erase(positionHistory.begin()); // Rimuovi il valore più vecchio
-        }
-        positionHistory.push_back(avgPosition);
-      for (size_t i = 0; i < positionHistory.size(); ++i){
-      sf::RectangleShape bar;
-      float barWidth= height/maxHistorySize;
-      float barHeight = Mean_Position(covey);
-      bar.setSize(sf::Vector2f(barWidth - 1, barHeight)); // -1 per lo spazio tra le barre
-      bar.setPosition(static_cast<float>(i) * barWidth, height - barHeight); // Posizione della barra
-      bar.setFillColor(sf::Color(0, 0, 255)); // Colore della barra (blu)
-      graph.draw(bar);
+        positionHistory.erase(
+            positionHistory.begin());  // Rimuovi il valore più vecchio
       }
-
-    }window.display();
+      positionHistory.push_back(avgPosition);
+      for (size_t i = 0; i < positionHistory.size(); ++i) {
+        sf::RectangleShape bar;
+        float barWidth = static_cast<float>(height / maxHistorySize);
+        float barHeight = Mean_Position(covey);
+        bar.setSize(sf::Vector2f(barWidth - 1,
+                                 barHeight));  // -1 per lo spazio tra le barre
+        bar.setPosition(static_cast<float>(i) * barWidth,
+                        height - barHeight);     // Posizione della barra
+        bar.setFillColor(sf::Color(0, 0, 255));  // Colore della barra (blu)
+        graph.draw(bar);
+      }
+    }
+    window.display();
   }
-  
-  
+
   return 0;
 }

@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -23,8 +24,16 @@ class Boid : public sf::Drawable, public sf::Transformable {
   Boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), velocity(sp) {
     birdTexture.loadFromFile("pidgey.png");
     birdSprite.setTexture(birdTexture);
-    setOrigin(297.5f, 281.f);
+    birdSprite.setOrigin(297.5f, 281.f);
     setPosition(position);
+    /*std::string texturePath = "pidgey.png";
+    if (!birdTexture.loadFromFile(texturePath)) {
+      std::cerr << "Error loading texture '" << texturePath << "' from "
+                << std::filesystem::current_path() << std::endl;
+    } else {
+      std::cout << "Texture loaded successfully from "
+                << std::filesystem::current_path() << std::endl;
+    }*/
   }
 
   // calculate the angle in oder to make the boid alligned to the direction of
@@ -63,14 +72,17 @@ bool near(Boid const& b_1, Boid const& b_2, float const& d);  // declaration
 std::vector<Boid*> near_boids(Flock& covey, const Boid& b_0, const float& d_);
 
 // law of separation.
-sf::Vector2f separation(Flock& covey, const Boid& b_i, std::vector<Boid*>& near_b_i);
+sf::Vector2f separation(Flock& covey, const Boid& b_i,
+                        std::vector<Boid*>& near_b_i);
 
 // set a limit to the velocity of a boid.
 void limitVelocity(Boid& crazy_boid, const float& max_speed);
 
-sf::Vector2f alignment(Flock& covey, const Boid& b_i, std::vector<Boid*>& near_b_i);
+sf::Vector2f alignment(Flock& covey, const Boid& b_i,
+                       std::vector<Boid*>& near_b_i);
 
-sf::Vector2f cohesion(Flock& covey, const Boid& b_i, std::vector<Boid*>& near_b_i);
+sf::Vector2f cohesion(Flock& covey, const Boid& b_i,
+                      std::vector<Boid*>& near_b_i);
 
 float Mean_Position(Flock& covey);
 

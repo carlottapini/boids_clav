@@ -37,7 +37,6 @@ sf::Vector2f separation(Flock& covey, const Boid& b_i,
   sf::Vector2f sum(0.0f, 0.0f);
   for (auto& b_j : near_b_i) {
     sf::Vector2f diff = (b_j->getPosition() - (b_i.getPosition()));
-    //float distance = std::hypot(diff.x, diff.y);
     sum += (diff);
   }
   if (!near_b_i.empty()) {
@@ -83,12 +82,12 @@ sf::Vector2f cohesion(Flock& covey, const Boid& b_i,
 
 float Mean_Position(Flock& covey) {
   float result{0.0f};
-  for(auto& b_0 : covey.all_boids_){
-    float speed=std::hypot((b_0.getPosition()).x, (b_0.getPosition()).y);
-    result+=speed;
+  for (auto& b_0 : covey.all_boids_) {
+    float speed = std::hypot((b_0.getPosition()).x, (b_0.getPosition()).y);
+    result += speed;
   }
   return result;
- }
+}
 
 void Boid::compute_angle() {
   float angle = 0.0f;
