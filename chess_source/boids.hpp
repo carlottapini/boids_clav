@@ -72,5 +72,7 @@ sf::Vector2f alignment(Flock& covey, const Boid& b_i, std::vector<Boid*>& near_b
 
 sf::Vector2f cohesion(Flock& covey, const Boid& b_i, std::vector<Boid*>& near_b_i);
 
+float Mean_Position(Flock& covey);
+
 }  // namespace bd
 #endif

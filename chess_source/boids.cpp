@@ -81,6 +81,15 @@ sf::Vector2f cohesion(Flock& covey, const Boid& b_i,
     return sf::Vector2f(0.0f, 0.0f);
 }
 
+float Mean_Position(Flock& covey) {
+  float result{0.0f};
+  for(auto& b_0 : covey.all_boids_){
+    float speed=std::hypot((b_0.getPosition()).x, (b_0.getPosition()).y);
+    result+=speed;
+  }
+  return result;
+ }
+
 void Boid::compute_angle() {
   float angle = 0.0f;
   if (velocity.x > 0) {

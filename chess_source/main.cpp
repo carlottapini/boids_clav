@@ -8,7 +8,12 @@ int main() {
   sf::RenderWindow window(
       sf::VideoMode(width, height), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  window.setPosition(sf::Vector2i(280, 50));
+  window.setPosition(sf::Vector2i(0, 50));
+
+  sf::RenderWindow graph(
+      sf::VideoMode(height, height), "graph",
+      sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+  graph.setPosition(sf::Vector2i(width, 50));
 
   /*
   if (!birdTexture.loadFromFile("pidgey.png")) {
@@ -86,19 +91,30 @@ int main() {
   }
 
   bd::Flock covey{birds, s, a, c};
+  unsigned long frameCount = 0;
+  std::vector<float> positionHistory;
+  size_t maxHistorySize = 1000;
+  
 
   // run the program as long as the window is open
-  while (window.isOpen()) {
+  while (window.isOpen() && graph.isOpen()) {
     // check all the window's events that were triggered since the last
     // iteration of the loop
     sf::Event event;
-    while (window.pollEvent(event)) {
+    sf::Event graph_event;
+    while (window.pollEvent(event) && graph.pollEvent(graph_event)) {
       // "close requested" event: we close the window
       if (event.type == sf::Event::Closed) window.close();
+      if (graph_event.type == sf::Event::Closed) graph.close();
+    }
+    while (graph.pollEvent(graph_event)) {
+      // "close requested" event: we close the window
+      if (graph_event.type == sf::Event::Closed) graph.close();
     }
 
     // clear the window with chosen color (red, green, blue)
     window.clear(sf::Color(145, 224, 255));
+    graph.clear(sf::Color(255, 255, 255));
 
     // draw each boid of birds vector
     for (auto& bird : covey.all_boids_) {
@@ -174,7 +190,27 @@ int main() {
     }
 
     // end the current frame
-    window.display();
+    
+    ++frameCount;
+    if(frameCount%500 == 0){
+      float avgPosition = bd::Mean_Position(covey);
+      if (positionHistory.size() >= maxHistorySize) {
+            positionHistory.erase(positionHistory.begin()); // Rimuovi il valore più vecchio
+        }
+        positionHistory.push_back(avgPosition);
+      for (size_t i = 0; i < positionHistory.size(); ++i){
+      sf::RectangleShape bar;
+      float barWidth= height/maxHistorySize;
+      float barHeight = Mean_Position(covey);
+      bar.setSize(sf::Vector2f(barWidth - 1, barHeight)); // -1 per lo spazio tra le barre
+      bar.setPosition(static_cast<float>(i) * barWidth, height - barHeight); // Posizione della barra
+      bar.setFillColor(sf::Color(0, 0, 255)); // Colore della barra (blu)
+      graph.draw(bar);
+      }
+
+    }window.display();
   }
+  
+  
   return 0;
 }
