@@ -12,6 +12,14 @@ sf::Vector2f GenerateRdmSpeed(float vmax) {
   return sf::Vector2f(vx, vy);
 }
 
+void limitVelocity(Boid& crazy_boid, const float& max_speed) {
+  sf::Vector2f v = crazy_boid.getVelocity();
+  float v_module = std::hypot(v.x, v.y);
+  if (v_module > max_speed) {
+    crazy_boid.setVelocity(max_speed * (v / v_module));
+  };
+}
+
 void pacman_effect(float wid, float hei, Boid& curr_boid) {
   sf::Vector2f curr_pos = curr_boid.getPosition();
   if (curr_pos.x > wid)
@@ -22,71 +30,6 @@ void pacman_effect(float wid, float hei, Boid& curr_boid) {
     curr_boid.setPosition(curr_pos.x, 0.0f);
   else if (curr_pos.y < 0)
     curr_boid.setPosition(curr_pos.x, hei);
-}
-
-std::vector<Boid*> near_boids(Flock& covey, const Boid& b_0, const float& d_) {
-  std::vector<Boid*> flock;
-  for (auto& other : covey.all_boids_) {
-    if (near(other, b_0, d_)) flock.push_back(&other);
-  }
-  return flock;
-}
-
-sf::Vector2f separation(Flock& covey, const Boid& b_i,
-                        std::vector<Boid*>& near_b_i) {
-  sf::Vector2f sum(0.0f, 0.0f);
-  for (auto& b_j : near_b_i) {
-    sf::Vector2f diff = (b_j->getPosition() - (b_i.getPosition()));
-    sum += (diff);
-  }
-  if (!near_b_i.empty()) {
-    return -(covey.s_ * sum);
-  } else {
-    return sf::Vector2f(0.0f, 0.0f);
-  }
-}
-
-void limitVelocity(Boid& crazy_boid, const float& max_speed) {
-  sf::Vector2f v = crazy_boid.getVelocity();
-  float v_module = std::hypot(v.x, v.y);
-  if (v_module > max_speed) {
-    crazy_boid.setVelocity(max_speed * (v / v_module));
-  };
-}
-
-sf::Vector2f alignment(Flock& covey, const Boid& b_i,
-                       std::vector<Boid*>& near_b_i) {
-  sf::Vector2f mean_velocity_j(0.0f, 0.0f);
-  for (auto& b_j : near_b_i) {
-    mean_velocity_j += b_j->getVelocity();
-  }
-  if (!near_b_i.empty()) {
-    mean_velocity_j /= static_cast<float>(near_b_i.size());
-    return covey.a_ * (mean_velocity_j - b_i.getVelocity());
-  } else
-    return sf::Vector2f(0.0f, 0.0f);
-}
-
-sf::Vector2f cohesion(Flock& covey, const Boid& b_i,
-                      std::vector<Boid*>& near_b_i) {
-  sf::Vector2f c_m(0.0f, 0.0f);
-  for (auto& b_j : near_b_i) {
-    c_m += b_j->getPosition();
-  }
-  if (!near_b_i.empty()) {
-    c_m /= static_cast<float>(near_b_i.size());
-    return covey.c_ * (c_m - b_i.getPosition());
-  } else
-    return sf::Vector2f(0.0f, 0.0f);
-}
-
-float Mean_Position(Flock& covey) {
-  float result{0.0f};
-  for (auto& b_0 : covey.all_boids_) {
-    float speed = std::hypot((b_0.getPosition()).x, (b_0.getPosition()).y);
-    result += speed;
-  }
-  return result;
 }
 
 void Boid::compute_angle() {
@@ -119,14 +62,94 @@ void Boid::setVelocity(const sf::Vector2f& new_velocity) {
   velocity = new_velocity;
 }
 
-bool near(Boid const& b_1, Boid const& b_2, float const& d) {
-  float const s = std::hypot((b_1.getPosition().x - b_2.getPosition().x),
-                             (b_1.getPosition().y - b_2.getPosition().y));
-  if (s < d && s > 0) {
-    return true;
-  } else {
-    return false;
+void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, float* a, float* c) {
+  const size_t width{500};
+  const size_t height{500};
+
+  sf::RenderWindow inputWindow(sf::VideoMode(width, height), "Input Parameters",
+                               sf::Style::Close);
+  inputWindow.setPosition(sf::Vector2i(300, 200));
+
+  // Array di stringhe per le etichette e gli input
+  std::vector<std::string> labels = {
+      "Number of birds (n > 0):",     "Max Speed (maxSpeed > 0):",
+      "Vision distance (d > 12 ):",  "Separation range (12 < d_s < d):",
+      "Repulsion intensity (s > 0):", "Alignment factor (0 < a < 1):",
+      "Cohesion factor (0 < c < 1):"};
+
+  std::vector<std::string> inputs = {"", "", "", "", "", "", ""};
+  sf::Font font;
+  font.loadFromFile("Roboto-Black.ttf");
+
+  std::vector<sf::Text> textLabels;
+  std::vector<sf::Text> textInputs;
+
+  for (size_t i = 0; i < labels.size(); ++i) {
+    sf::Text label;
+    label.setFont(font);
+    label.setString(labels[i]);
+    label.setCharacterSize(20);
+    label.setPosition(10, 50 + static_cast<float> (i) * 50);
+    label.setFillColor(sf::Color::White);
+
+    textLabels.push_back(label);
+
+    sf::Text input;
+    input.setFont(font);
+    input.setString(inputs[i]);
+    input.setCharacterSize(20);
+    input.setPosition(350, 50 + static_cast<float> (i) * 50);
+    input.setFillColor(sf::Color::Yellow);
+
+    textInputs.push_back(input);
+  }
+
+  size_t currentInput{};
+  while (inputWindow.isOpen()) {
+    sf::Event event;
+    while (inputWindow.pollEvent(event)) {
+      if (event.type == sf::Event::Closed) inputWindow.close();
+      if (event.type == sf::Event::TextEntered) {
+        if ((event.text.unicode >= 48 && event.text.unicode <= 57) ||
+            event.text.unicode == 46) {  // numeri e punto
+          inputs[currentInput] += static_cast<char>(event.text.unicode);
+          textInputs[currentInput].setString(inputs[currentInput]);
+        } else if (event.text.unicode == 8 &&
+                   !inputs[currentInput].empty()) {  // backspace
+          inputs[currentInput].erase(inputs[currentInput].size() - 1);
+          textInputs[currentInput].setString(inputs[currentInput]);
+        } 
+      }
+
+      if (event.type == sf::Event::KeyPressed &&
+          event.key.code == sf::Keyboard::Enter) {
+        currentInput++;
+        if (currentInput >= textInputs.size()) {
+          *n = std::stoi(inputs[0]);
+          assert(*n > 0);
+          *maxSpeed = std::stof(inputs[1]);
+          assert(*maxSpeed > 0);
+          *d = std::stof(inputs[2]);
+          assert(12.f < *d);
+          *d_s = std::stof(inputs[3]);
+          assert(12.f < *d_s);
+          assert(*d_s < *d);
+          *s = std::stof(inputs[4]);
+          assert(0 <= *s && *s <= 1);
+          *a = std::stof(inputs[5]);
+          assert(0 <= *a);
+          *c = std::stof(inputs[6]);
+          assert(0 <= *c && *c <= 1);
+          inputWindow.close();
+        }
+      }
+    }
+
+    inputWindow.clear(sf::Color::Black);
+    for (const auto& label : textLabels) inputWindow.draw(label);
+    for (const auto& input : textInputs) inputWindow.draw(input);
+
+    inputWindow.display();
   }
 }
-
-}  // namespace bd
+}

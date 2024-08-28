@@ -1,6 +1,17 @@
 #include "boids.hpp"
+#include "flight_laws.hpp"
+#include "statistics.hpp"
 
 int main() {
+  int n{};
+  float maxSpeed{};
+  float d{};
+  float d_s{};
+  float s{};
+  float a{};
+  float c{};
+  bd::inputParameters(&n, &maxSpeed, &d, &d_s, &s, &a, &c);
+
   const size_t height{600};
   const size_t width{800};
   const size_t graph_size{500};
@@ -16,56 +27,45 @@ int main() {
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   graph.setPosition(sf::Vector2i(width, 50));
 
-  /*
-  if (!birdTexture.loadFromFile("pidgey.png")) {
-    return -1; // Error loading image
-  }*/
-
+/*
   // let the user choose the number of birds in the floak.
   int n{};
   std::cout << "Insert number of birds [n > 0]\nn:";
   std::cin >> n;
-  assert(n > 0);
 
   // set the boids' maximum initial speed.
   float maxSpeed{};
   std::cout << "Insert maximum speed for the boids [maxSpeed > 0]\nmaxSpeed:";
   std::cin >> maxSpeed;
-  assert(maxSpeed > 0);
 
   // set the boids' vision (neighborhood range).
   float d{};
   std::cout << "\nInsert distance at which a boid is considered near another "
                "[d > 300]\nd:";
   std::cin >> d;
-  assert(12.f < d);
 
   // set the range for the law of separation.
   float d_s{};
   std::cout << "\nInsert range for the law of separation[300 < d_s < d]\nd_s:";
   std::cin >> d_s;
-  assert(12.f < d_s);
-  assert(d_s < d);
 
   // set separation intensity factor.
   float s{};
   std::cout << "\nInsert repultion intensity [s > 0]\ns:";
   std::cin >> s;
-  // assert(0 <= s && s <= 1);
 
   // set alignment intensity factor.
   float a{};
   std::cout << "\nInsert alignment factor "
                "[0 < a < 1]\na:";
   std::cin >> a;
-  assert(0 <= a);
 
   // set cohesion intensity factor.
   float c{};
   std::cout << "\nInsert cohesion factor "
                "[0 < c < 1]\nc:";
   std::cin >> c;
-  assert(0 <= c && c <= 1);
+  */
 
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
@@ -92,7 +92,7 @@ int main() {
   }
 
   bd::Flock covey{birds, s, a, c};
-  unsigned long frameCount = 0;
+  size_t frameCount{0};
   std::vector<float> positionHistory;
   size_t maxHistorySize = 1000;
 
@@ -106,7 +106,7 @@ int main() {
       // "close requested" event: we close the window
       if (event.type == sf::Event::Closed) window.close();
       if (graph_event.type == sf::Event::Closed) graph.close();
-      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
         window.close();
         graph.close();
       }
@@ -191,30 +191,31 @@ int main() {
             */
     }
 
-    // end the current frame
-
     ++frameCount;
     if (frameCount % 500 == 0) {
-      float avgPosition = bd::Mean_Position(covey);
+      float avgPosition = bd::MeanPosition(covey);
+      std::cout << avgPosition << std::endl;
       if (positionHistory.size() >= maxHistorySize) {
-        positionHistory.erase(
-            positionHistory.begin());  // Rimuovi il valore più vecchio
+        positionHistory.erase(positionHistory.begin());  // Remove older value
       }
       positionHistory.push_back(avgPosition);
+
       for (size_t i = 0; i < positionHistory.size(); ++i) {
         sf::RectangleShape bar;
-        float barWidth = static_cast<float>(height / maxHistorySize);
-        float barHeight = Mean_Position(covey);
+        float barWidth = static_cast<float>(graph_size / maxHistorySize);
+        float barHeight =
+            positionHistory[i];  // Usa il valore memorizzato in positionHistory
         bar.setSize(sf::Vector2f(barWidth - 1,
-                                 barHeight));  // -1 per lo spazio tra le barre
+                                 barHeight));  // -1 for spacing between bars
         bar.setPosition(static_cast<float>(i) * barWidth,
-                        height - barHeight);     // Posizione della barra
-        bar.setFillColor(sf::Color(0, 0, 255));  // Colore della barra (blu)
-        graph.draw(bar);
+                        graph_size - barHeight);  // Bar position
+        bar.setFillColor(sf::Color(0, 0, 255));   // Bar color (blue)
+        graph.draw(bar);  // Disegna il rettangolo sulla finestra del grafico
       }
     }
-    
+    // end the current frame
     window.display();
+    graph.display();
   }
 
   return 0;
