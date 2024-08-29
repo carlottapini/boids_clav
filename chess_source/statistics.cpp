@@ -4,13 +4,12 @@
 #include <cmath>
 #include <cstdlib>
 namespace bd {
-float MeanPosition(Flock& covey) {
+float MeanXPosition(Flock& covey) {
   float result{0.0f};
   for (auto& b_0 : covey.all_boids_) {
-    float p = std::hypot((b_0.getPosition()).x, (b_0.getPosition()).y);
-    result += p;
+    result += (b_0.getPosition()).x;
   }
-  return result;
+  return result/(covey.all_boids_).size();
 }
 
 float MeanSpeed(Flock& covey) {
