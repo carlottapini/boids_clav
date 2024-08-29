@@ -30,10 +30,10 @@ target_link_libraries(chess PRIVATE sfml-graphics)
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)
-
   # aggiungi l'eseguibile all.t
-  # add_executable(all.t all.t.cpp complex.t.cpp)
+  add_executable(boids.t boids.test.cpp boids.cpp)
   # aggiungi l'eseguibile all.t alla lista dei test
+  target_link_libraries(boids.t PRIVATE sfml-graphics)
   # add_test(NAME all.t COMMAND all.t)
-
+  add_test(NAME boids_test COMMAND boids_test)
 endif()

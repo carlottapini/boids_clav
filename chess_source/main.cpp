@@ -35,46 +35,6 @@ int main() {
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   graph1.setPosition(sf::Vector2i(width, 50 + graph_size));
 
-  /*
-    // let the user choose the number of birds in the floak.
-    int n{};
-    std::cout << "Insert number of birds [n > 0]\nn:";
-    std::cin >> n;
-
-    // set the boids' maximum initial speed.
-    float maxSpeed{};
-    std::cout << "Insert maximum speed for the boids [maxSpeed > 0]\nmaxSpeed:";
-    std::cin >> maxSpeed;
-
-    // set the boids' vision (neighborhood range).
-    float d{};
-    std::cout << "\nInsert distance at which a boid is considered near another "
-                 "[d > 300]\nd:";
-    std::cin >> d;
-
-    // set the range for the law of separation.
-    float d_s{};
-    std::cout << "\nInsert range for the law of separation[300 < d_s <
-    d]\nd_s:"; std::cin >> d_s;
-
-    // set separation intensity factor.
-    float s{};
-    std::cout << "\nInsert repultion intensity [s > 0]\ns:";
-    std::cin >> s;
-
-    // set alignment intensity factor.
-    float a{};
-    std::cout << "\nInsert alignment factor "
-                 "[0 < a < 1]\na:";
-    std::cin >> a;
-
-    // set cohesion intensity factor.
-    float c{};
-    std::cout << "\nInsert cohesion factor "
-                 "[0 < c < 1]\nc:";
-    std::cin >> c;
-    */
-
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
   birds.reserve(static_cast<size_t>(n));
@@ -100,6 +60,10 @@ int main() {
   }
 
   bd::Flock covey{birds, s, a, c};
+
+  size_t frameCount{0};
+  std::vector<float> XpositionHistory;
+  std::vector<float> speedHistory;
 
   // run the program as long as the window is open
   while (window.isOpen() || graph.isOpen() || graph1.isOpen()) {
@@ -206,13 +170,9 @@ int main() {
 
             */
     }
-
-    size_t frameCount{0};
-    std::vector<float> XpositionHistory;
-    std::vector<float> speedHistory;
-    float x_axlenght = graph_size - 40.f;
-    float y_axlenght = graph_size - 30.f;
-    int histo_bins = 26;
+    const float x_axlenght = graph_size - 40.f;
+    const float y_axlenght = graph_size - 30.f;
+    const float histo_bins = 26.f;
 
     if (frameCount % 1000 == 0) {
       float avgXPosition =
@@ -226,52 +186,47 @@ int main() {
     // draw histogram bars
     for (size_t i = 0; i < XpositionHistory.size(); ++i) {
       sf::RectangleShape bar;
-      float barWidth = x_axlenght / (histo_bins-1);
-      float barHeight =
-          (y_axlenght - 10.f) *
-          (std::count(XpositionHistory.begin(), XpositionHistory.end(),
-                      XpositionHistory[i])) /
-          XpositionHistory.size();
+      float barWidth = x_axlenght / (histo_bins - 1);
+      float barHeight = (y_axlenght - 10.f) *
+                        static_cast<float>(std::count(XpositionHistory.begin(),
+                                                      XpositionHistory.end(),
+                                                      XpositionHistory[i])) /
+                        static_cast<float>(XpositionHistory.size());
       bar.setSize(sf::Vector2f(barWidth - 1,
                                barHeight));  // -1 for spacing between bars
       bar.setPosition(25.5f + XpositionHistory[i] * barWidth,
                       graph_size - 30.f - barHeight);  // Bar position
       bar.setFillColor(sf::Color(0, 0, 255));          // Bar color (blue)
-      graph.draw(bar);  
+      graph.draw(bar);
     }
 
     // draw x axis
-    sf::RectangleShape horizontalLine(
-        sf::Vector2f(x_axlenght, 2.f));  
-    horizontalLine.setPosition(
-        25.f, graph_size - 30);  
+    sf::RectangleShape horizontalLine(sf::Vector2f(x_axlenght, 2.f));
+    horizontalLine.setPosition(25.f, graph_size - 30);
     horizontalLine.setFillColor(sf::Color::Black);
     graph.draw(horizontalLine);
     graph1.draw(horizontalLine);
-    
+
     // draw y axis
-    sf::RectangleShape verticalLine(
-        sf::Vector2f(2.f, y_axlenght));  
-    verticalLine.setPosition(25.5f,
-                             10.f);  
+    sf::RectangleShape verticalLine(sf::Vector2f(2.f, y_axlenght));
+    verticalLine.setPosition(25.5f, 10.f);
     verticalLine.setFillColor(sf::Color::Black);
     graph.draw(verticalLine);
     graph1.draw(verticalLine);
 
     // draw the x values under x axis
-    for (int i = 0; i < histo_bins; ++i) {
-      // text boxes x coordinate 
+    for (float i = 0.f; i < histo_bins; ++i) {
+      // text boxes x coordinate
       float xPosition = 25.f + i * (x_axlenght / (histo_bins - 1));
-      if (i % 5 == 0) {
+      if (static_cast<int>(i) % 5 == 0) {
         // create the text for the x values
         sf::Text x_text;
         x_text.setFont(font);
         x_text.setCharacterSize(15);
         x_text.setFillColor(sf::Color::Black);
-        x_text.setOrigin(x_text.getLocalBounds().width/2.f, 0);
-
-        x_text.setString(std::to_string(i));
-
+        x_text.setString(
+            std::to_string(static_cast<int>(i * width / (histo_bins - 1))));
+        x_text.setOrigin(x_text.getLocalBounds().width / 2.f, 0);
         x_text.setPosition(xPosition, graph_size - 20);
 
         graph.draw(x_text);
@@ -279,27 +234,29 @@ int main() {
 
       sf::RectangleShape separateLine(
           sf::Vector2f(1.f, y_axlenght));  // Lunghezza dell'asse e altezza
-      separateLine.setPosition(25.5f + static_cast<float>(i) * x_axlenght / (histo_bins -1),
-                               10.f);  // Posizionamento dell'asse al centro
+      separateLine.setPosition(
+          25.5f + static_cast<float>(i) * x_axlenght / (histo_bins - 1),
+          10.f);  // Posizionamento dell'asse al centro
       separateLine.setFillColor(sf::Color::Black);
       graph.draw(separateLine);
     }
 
     // draw y values near to y axis
-    for (int i : {0, 1}) {
+    for (float i : {0.f, 1.f}) {
       float yPosition = (graph_size - 30.f) - i * (y_axlenght - 10.f);
       sf::Text y_text;
       y_text.setFont(font);
       y_text.setCharacterSize(15);
       y_text.setFillColor(sf::Color::Black);
 
-      y_text.setString(std::to_string(i));
-
-      y_text.setPosition(10.f, yPosition + y_text.getLocalBounds().height / 2);
+      y_text.setString(std::to_string(static_cast<int>(i)));
+      y_text.setOrigin(0.f, y_text.getLocalBounds().height / 2);
+      y_text.setPosition(10.f, yPosition);
 
       // Disegna il testo
       graph.draw(y_text);
     }
+    ++frameCount;
 
     /*
     for (size_t i = 0; i < positionHistory.size(); ++i) {
@@ -317,7 +274,6 @@ int main() {
     window.display();
     graph.display();
     graph1.display();
-    ++frameCount;
   }
 
   return 0;
