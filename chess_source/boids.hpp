@@ -10,6 +10,7 @@
 #include <vector>
 #include <cassert>
 
+
 // create namespace bd.
 namespace bd {
 class Boid : public sf::Drawable, public sf::Transformable {
@@ -61,6 +62,6 @@ void limitVelocity(Boid& crazy_boid, const float& max_speed);
 void pacman_effect(float wid, float hei, Boid& curr_boid);
 
 // parameter input
-void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, float* a, float* c);
+void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, float& d_s_, float& s_, float& a_, float& c_);
 }  // namespace bd
 #endif

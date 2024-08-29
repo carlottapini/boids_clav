@@ -62,7 +62,7 @@ void Boid::setVelocity(const sf::Vector2f& new_velocity) {
   velocity = new_velocity;
 }
 
-void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, float* a, float* c) {
+void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, float& d_s_, float& s_, float& a_, float& c_) {
   const size_t width{500};
   const size_t height{500};
 
@@ -78,15 +78,14 @@ void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, fl
       "Cohesion factor (0 < c < 1):"};
 
   std::vector<std::string> inputs = {"", "", "", "", "", "", ""};
-  sf::Font font;
-  font.loadFromFile("Roboto-Black.ttf");
+ 
 
   std::vector<sf::Text> textLabels;
   std::vector<sf::Text> textInputs;
 
   for (size_t i = 0; i < labels.size(); ++i) {
     sf::Text label;
-    label.setFont(font);
+    label.setFont(font_);
     label.setString(labels[i]);
     label.setCharacterSize(20);
     label.setPosition(10, 50 + static_cast<float> (i) * 50);
@@ -95,7 +94,7 @@ void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, fl
     textLabels.push_back(label);
 
     sf::Text input;
-    input.setFont(font);
+    input.setFont(font_);
     input.setString(inputs[i]);
     input.setCharacterSize(20);
     input.setPosition(350, 50 + static_cast<float> (i) * 50);
@@ -125,21 +124,21 @@ void inputParameters(int* n, float* maxSpeed, float* d, float* d_s, float* s, fl
           event.key.code == sf::Keyboard::Enter) {
         currentInput++;
         if (currentInput >= textInputs.size()) {
-          *n = std::stoi(inputs[0]);
-          assert(*n > 0);
-          *maxSpeed = std::stof(inputs[1]);
-          assert(*maxSpeed > 0);
-          *d = std::stof(inputs[2]);
-          assert(12.f < *d);
-          *d_s = std::stof(inputs[3]);
-          assert(12.f < *d_s);
-          assert(*d_s < *d);
-          *s = std::stof(inputs[4]);
-          assert(0 <= *s && *s <= 1);
-          *a = std::stof(inputs[5]);
-          assert(0 <= *a);
-          *c = std::stof(inputs[6]);
-          assert(0 <= *c && *c <= 1);
+          n_ = std::stoi(inputs[0]);
+          assert(n_ > 0);
+          maxSpeed_ = std::stof(inputs[1]);
+          assert(maxSpeed_ > 0);
+          d_ = std::stof(inputs[2]);
+          assert(12.f < d_);
+          d_s_ = std::stof(inputs[3]);
+          assert(12.f < d_s_);
+          assert(d_s_ < d_);
+          s_ = std::stof(inputs[4]);
+          assert(0 <= s_ && s_ <= 1);
+          a_ = std::stof(inputs[5]);
+          assert(0 <= a_);
+          c_ = std::stof(inputs[6]);
+          assert(0 <= c_ && c_ <= 1);
           inputWindow.close();
         }
       }
