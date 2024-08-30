@@ -10,7 +10,7 @@ TEST_CASE("means' test"){
     flock.all_boids_.push_back(bd::Boid(sf::Vector2f(20.f, 30.f), sf::Vector2f(0.f, 1.f)));
     flock.all_boids_.push_back(bd::Boid(sf::Vector2f(30.f, 40.f), sf::Vector2f(1.f, 1.f)));
 
-    float N = flock.all_boids_.size();
+    float N = static_cast<float> (flock.all_boids_.size());
     SUBCASE("mean x position's test"){
         float mean_x = bd::MeanXPosition(flock, N);
 
