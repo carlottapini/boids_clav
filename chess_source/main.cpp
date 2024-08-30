@@ -49,7 +49,8 @@ int main() {
 
   // view for scrolling in the output window
   sf::View view;
-  view.setSize(output.getSize().x, output.getSize().y);
+  view.setSize(static_cast<float>(output.getSize().x),
+               static_cast<float>(output.getSize().y));
   view.setCenter(view.getSize().x / 2, view.getSize().y / 2);
 
   // create a vector containing all the boids.
