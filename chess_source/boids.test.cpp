@@ -7,20 +7,20 @@
 #include "statistics.hpp"
 
 TEST_CASE("Testing pac-man effect") {
-  // Define the width and height of the boundary
+  // define the width and height of the boundary
   float width{800.f};
   float height{600.f};
 
-  // Create a boid positioned outside the boundary with zero velocity
+  // create a boid positioned outside the boundary with zero velocity
   sf::Vector2f position(810.f, 610.f);
   sf::Vector2f velocity(0.f, 0.f);
 
-  // Instantiate the boid with the given position and velocity
+  // instantiate the boid with the given position and velocity
   bd::Boid test_boid(position, velocity);
-  // Apply the Pac-Man effect to wrap the boid's position within the boundary
+  // apply the Pac-Man effect to wrap the boid's position within the boundary
   bd::pacman_effect(width, height, test_boid);
 
-  // Check if the boid's position is correctly wrapped around to the boundary
+  // check if the boid's position is correctly wrapped around to the boundary
   CHECK(test_boid.getPosition().x == 0.f);
   CHECK(test_boid.getPosition().y == 0.f);
 }
