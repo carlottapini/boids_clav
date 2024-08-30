@@ -21,6 +21,14 @@ float MeanXPosition(Flock& covey, const float N) {
   return result / N;
 }
 
+float MeanYPosition(Flock& covey, const float N) {
+  float result{0.0f};
+  for (auto& b_0 : covey.all_boids_) {
+    result += (b_0.getPosition()).y;
+  }
+  return result / N;
+}
+
 float MeanSpeed(Flock& covey, const float N) {
   float result{0.0f};
   for (auto& b_i : covey.all_boids_) {

@@ -24,8 +24,7 @@ class Boid : public sf::Drawable, public sf::Transformable {
   Boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), velocity(sp) {
     birdTexture.loadFromFile("pidgey.png");
     if (!birdTexture.loadFromFile("pidgey.png")) {
-      std::cerr << "Error loading texture pidgey.png" << "' from "
-                << std::filesystem::current_path() << std::endl;
+      throw std::runtime_error ("Error loading texture pidgey.png");
     }
     birdSprite.setTexture(birdTexture);
     birdSprite.setOrigin(297.5f, 281.f);
