@@ -11,7 +11,7 @@ float MeanYPosition(Flock& covey, const float N);
 float MeanSpeed(Flock& covey, const float N);
 
 // calculate mean nearby boids distance per frame
-//float MeanDistance(Flock& covey);
+float MeanDistance(Flock& covey, const float N);
 
 // calculate campionary standard deviance.
 //float DevStd(Flock& covey);
