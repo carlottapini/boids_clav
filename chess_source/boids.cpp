@@ -73,10 +73,10 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
   inputWindow.setPosition(sf::Vector2i(350, 100));
 
   std::vector<std::string> labels = {
-      "Number of birds (n > 0):",     "Max Speed (maxSpeed > 0):",
-      "Vision distance (d > 12 ):",   "Separation range (12 < d_s < d):",
-      "Repulsion intensity (s > 0):", "Alignment factor (0 < a < 1):",
-      "Cohesion factor (0 < c < 1):"};
+      "Number of birds (n > 0):",           "Max Speed (maxSpeed > 0):",
+      "Vision distance (d > 12 ):",         "Separation range (12 < d_s < d):",
+      "Repulsion intensity (0 <= s <= 1):", "Alignment factor (0 <= a <= 1):",
+      "Cohesion factor (0 <= c <= 1):"};
 
   std::vector<std::string> inputs = {"", "", "", "", "", "", ""};
 
@@ -176,27 +176,28 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
         }
       }
 
-    inputWindow.clear(sf::Color::Black);
+      inputWindow.clear(sf::Color::Black);
 
-    for (const auto& label : textLabels) inputWindow.draw(label);
-    for (const auto& input : textInputs) inputWindow.draw(input);
+      for (const auto& label : textLabels) inputWindow.draw(label);
+      for (const auto& input : textInputs) inputWindow.draw(input);
 
-    // Draw the blinking cursor
-    if (currentInput < textInputs.size()) {
-      sf::Text& activeInput = textInputs[currentInput];
-      sf::Vector2f cursorPosition =
-          activeInput.findCharacterPos(inputs[currentInput].size());
+      // Draw the blinking cursor
+      if (currentInput < textInputs.size()) {
+        sf::Text& activeInput = textInputs[currentInput];
+        sf::Vector2f cursorPosition =
+            activeInput.findCharacterPos(inputs[currentInput].size());
 
-      // Blink the cursor every 500ms
-      if (cursorClock.getElapsedTime().asMilliseconds() % 1000 < 500) {
-        sf::RectangleShape cursor(
-            sf::Vector2f(2.f, static_cast<float>(activeInput.getCharacterSize())));
-        cursor.setPosition(cursorPosition);
-        cursor.setFillColor(sf::Color::Yellow);
-        inputWindow.draw(cursor);
+        // Blink the cursor every 500ms
+        if (cursorClock.getElapsedTime().asMilliseconds() % 1000 < 500) {
+          sf::RectangleShape cursor(sf::Vector2f(
+              2.f, static_cast<float>(activeInput.getCharacterSize())));
+          cursor.setPosition(cursorPosition);
+          cursor.setFillColor(sf::Color::Yellow);
+          inputWindow.draw(cursor);
+        }
       }
+      inputWindow.display();
     }
-    inputWindow.display();
   }
 }
 }  // namespace bd

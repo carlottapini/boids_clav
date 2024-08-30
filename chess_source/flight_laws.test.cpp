@@ -1,9 +1,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "boids.hpp"
 #include "flight_laws.hpp"
+
+#include "boids.hpp"
 #include "doctest.h"
 #include "statistics.hpp"
-
 
 TEST_CASE("Testing flight functions") {
   // create 3 boids with different position and velocity
@@ -69,4 +69,3 @@ TEST_CASE("Testing flight functions") {
     CHECK(cohesion_velocity_b0.y == doctest::Approx(0.0));
   }
 }
-

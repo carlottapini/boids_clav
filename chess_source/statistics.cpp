@@ -14,7 +14,7 @@ sf::RectangleShape axis(const float length, const float height,
 }
 
 float MeanXPosition(Flock& covey, const float N) {
-  float result{0.0f};
+  float result{};
   for (auto& b_0 : covey.all_boids_) {
     result += (b_0.getPosition()).x;
   }
@@ -22,7 +22,7 @@ float MeanXPosition(Flock& covey, const float N) {
 }
 
 float MeanYPosition(Flock& covey, const float N) {
-  float result{0.0f};
+  float result{};
   for (auto& b_0 : covey.all_boids_) {
     result += (b_0.getPosition()).y;
   }
@@ -30,7 +30,7 @@ float MeanYPosition(Flock& covey, const float N) {
 }
 
 float MeanSpeed(Flock& covey, const float N) {
-  float result{0.0f};
+  float result{};
   for (auto& b_i : covey.all_boids_) {
     float v = std::hypot((b_i.getVelocity()).x, (b_i.getVelocity()).y);
     result += v;
@@ -39,15 +39,41 @@ float MeanSpeed(Flock& covey, const float N) {
 }
 
 float MeanDistance(Flock& covey, const float N) {
-  float result{0.0f};
+  float result{};
   for (auto& b_i : covey.all_boids_) {
     for (auto& b_j : covey.all_boids_) {
       sf::Vector2f diff = b_i.getPosition() - b_j.getPosition();
-      result += (std::hypot(diff.x, diff.y)/(N-1));
-    }; 
+      result += (std::hypot(diff.x, diff.y) / (N - 1));
+    };
   }
-  return result/ N;
+  return result / N;
 }
 
-// float DevStd(Flock& covey) {}
+double DevStdDistance(Flock& covey, const float N) {
+  float sumSquaredDiff{};
+  float dist{};
+  for (auto& b_i : covey.all_boids_) {
+    for (auto& b_j : covey.all_boids_) {
+      sf::Vector2f diff = b_i.getPosition() - b_j.getPosition();
+      dist = std::hypot(diff.x, diff.y) / (N - 1);
+      sumSquaredDiff +=
+          (dist - MeanDistance(covey, N)) * (dist - MeanDistance(covey, N));
+    }
+  }
+  return std::sqrt(sumSquaredDiff / (N - 1));
+}
+
+double DevStdSpeed(Flock& covey, const float N) {
+  float sumSquaredDiff{0.0f};
+  float speed{};
+  for (auto& b_i : covey.all_boids_) {
+    for (auto& b_j : covey.all_boids_) {
+      sf::Vector2f diff = b_i.getVelocity() - b_j.getVelocity();
+      speed = std::hypot(diff.x, diff.y);
+      sumSquaredDiff +=
+          (speed - MeanSpeed(covey, N)) * (speed - MeanSpeed(covey, N));
+    }
+  }
+  return std::sqrt(sumSquaredDiff / (N - 1));
+}
 }  // namespace bd
