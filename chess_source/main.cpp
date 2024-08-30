@@ -19,33 +19,33 @@ int main() {
   float c{};
   bd::inputParameters(font, n, maxSpeed, d, d_s, s, a, c);
 
-  const size_t HEIGHT{600};
-  const size_t WIDTH{800};
-  const size_t GRAPH_SIZE{500};
-  const size_t OUT_SIZE_W{800};
-  const size_t OUT_SIZE_H{300};
+  const size_t HEIGHT{500};
+  const size_t WIDTH{700};
+  const size_t GRAPH_SIZE{340};
+  const size_t OUT_SIZE_W{700};
+  const size_t OUT_SIZE_H{200};
 
 
   // create the window and set its position.
   sf::RenderWindow window(
       sf::VideoMode(WIDTH, HEIGHT), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  window.setPosition(sf::Vector2i(0, 50));
+  window.setPosition(sf::Vector2i(0, 0));
 
   sf::RenderWindow graph(
-      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "graph",
+      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "mean x position histogram",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  graph.setPosition(sf::Vector2i(WIDTH, 50));
+  graph.setPosition(sf::Vector2i(WIDTH + 50, 0));
 
   sf::RenderWindow graph1(
-      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "graph1",
+      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "mean y position histogram",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  graph1.setPosition(sf::Vector2i(WIDTH, 50 + GRAPH_SIZE));
+  graph1.setPosition(sf::Vector2i(WIDTH + 50, GRAPH_SIZE + 50));
 
   sf::RenderWindow output(
       sf::VideoMode(OUT_SIZE_W, OUT_SIZE_H), "output",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  output.setPosition(sf::Vector2i(0, 600));
+  output.setPosition(sf::Vector2i(0, HEIGHT + 30));
 
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
@@ -108,12 +108,13 @@ int main() {
       window.close();
       graph.close();
       graph1.close();
+      output.close();
     }
     // clear the window with chosen color (red, green, blue)
     window.clear(sf::Color(145, 224, 255));
     graph.clear(sf::Color(255, 255, 255));
     graph1.clear(sf::Color(255, 255, 255));
-    output.clear(sf::Color(255,255,255));
+    output.clear(sf::Color::Black);
 
     // draw each boid of birds vector
     for (auto& bird : covey.all_boids_) {
@@ -191,6 +192,7 @@ int main() {
     }
 
     // Define constants for margins and axis settings
+    const float N = static_cast<float> (n);
     const float GRAPH_MARGIN_X = 25.5f;
     const float GRAPH_MARGIN_Y = 10.f;
     const float AXIS_WIDTH = 2.f;
@@ -200,13 +202,13 @@ int main() {
     const float Y_AXIS_LENGTH = GRAPH_SIZE - 3 * GRAPH_MARGIN_Y;
     const float BINS = 26.f;
 
-    if (frameCount % 1000 == 0) {
+    if (frameCount % 100 == 0) {
       // calculate the averege X position of boids, scaled in a range between 0
       // and 25
-      float avgXPosition = ((BINS - 1) * (bd::MeanXPosition(covey)) / WIDTH);
+      float avgXPosition = ((BINS - 1) * (bd::MeanXPosition(covey, N)) / WIDTH);
       XpositionHistory.push_back(std::round(avgXPosition));
 
-      float avgVelocity = (bd::MeanSpeed(covey) / maxSpeed);
+      float avgVelocity = (bd::MeanSpeed(covey, N) / maxSpeed);
       speedHistory.push_back(std::round(avgVelocity));
     }
 

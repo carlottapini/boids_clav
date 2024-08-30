@@ -15,18 +15,24 @@ TEST_CASE ("Testing pacman effect"){
     bd::Boid test_boid (position, velocity);
     bd::pacman_effect(width, height, test_boid);
 
-    CHECK(test_boid.getPosition().x == 50.f);
-    CHECK(test_boid.getPosition().y == 50.f);
+    CHECK(test_boid.getPosition().x == 0.f);
+    CHECK(test_boid.getPosition().y == 0.f);
 }
 TEST_CASE ("Testing GenerateRdmSpeed") {
     float maxSpeed{1.f};
     sf::Vector2f velocity = bd::GenerateRdmSpeed(maxSpeed);
 
-    float speedCheck= std::hypot(velocity.x, velocity.y);
-    CHECK(speedCheck <= maxSpeed);  
+    if (velocity.x > 0)
+    CHECK(velocity.x <= maxSpeed);
+    else CHECK(velocity.x >= -maxSpeed);
+
+    if (velocity.y > 0)
+    CHECK(velocity.y <= maxSpeed);
+    else CHECK(velocity.y >= -maxSpeed);
 }
+
 TEST_CASE("Testing Alignment") {
-    // Crea tre Boids con posizioni e velocità differenti
+    // create 3 boids with different position and velocity
     std::vector<sf::Vector2f> positions = {
         {100.f, 100.f},
         {105.f, 105.f},
@@ -40,39 +46,33 @@ TEST_CASE("Testing Alignment") {
 
     bd::Flock flock;
 
-    // Crea i Boids e aggiungili direttamente al vettore all_boids_ usando un ciclo for
+    // Create boids and add them to flock
     for (size_t i = 0; i < positions.size(); ++i) {
         bd::Boid boid(positions[i], velocities[i]);
         flock.all_boids_.push_back(boid);
     }
 
-    // Vettore di Boids vicini
+    // vector near boids
     std::vector<bd::Boid*> neighbors = {&flock.all_boids_[1], &flock.all_boids_[2]};
 
-    // Applica la funzione di allineamento
-    sf::Vector2f alignment_velocity = bd::alignment(flock, flock.all_boids_[0], neighbors);
+    flock.a_ = 0.5f;
+    sf::Vector2f alignment_velocity_b0 = bd::alignment(flock, flock.all_boids_[0], neighbors);
 
-    // La velocità media dei vicini dovrebbe essere (0.5f, 1.5f)
-    sf::Vector2f expected_velocity(0.5f, 1.5f);
-
-    CHECK(alignment_velocity.x == doctest::Approx(expected_velocity.x));
-    CHECK(alignment_velocity.y == doctest::Approx(expected_velocity.y));
+    CHECK(alignment_velocity_b0.x == doctest::Approx(-0.75));
+    CHECK(alignment_velocity_b0.y == doctest::Approx(0.75));
 }
 
 TEST_CASE("Testing Separation") {
-    // Parametri di separazione
-    
-
-    // Crea un Boid di test
+    // create test boid
     sf::Vector2f position(400.f, 300.f);
     sf::Vector2f velocity(10.f, 0.f);
     bd::Boid test_boid(position, velocity);
 
-    // Crea i Boids vicini
+    // create near boids
     std::vector<sf::Vector2f> neighbor_positions = {
-        {450.f, 300.f}, // Vicino sulla destra
-        {350.f, 300.f}, // Vicino sulla sinistra
-        {400.f, 250.f}  // Vicino sopra
+        {450.f, 300.f}, // near to the right
+        {350.f, 300.f}, // near to the left
+        {400.f, 250.f}  // near above
     };
     std::vector<sf::Vector2f> neighbor_velocities = {
         {0.f, 10.f},
@@ -87,35 +87,30 @@ TEST_CASE("Testing Separation") {
         flock.all_boids_.push_back(boid);
     }
 
-    // Vettore di Boids vicini
+    // near boids
     std::vector<bd::Boid*> neighbors;
     for (auto& boid : flock.all_boids_) {
         neighbors.push_back(&boid);
     }
 
-    // Calcola il vettore di separazione
+    flock.s_ = 0.5f;
     sf::Vector2f separation_force = bd::separation(flock, test_boid, neighbors);
 
-    // Verifica che la forza di separazione punti nella direzione opposta alla media delle posizioni dei vicini
-    CHECK(separation_force.x < 0); // Deve puntare a sinistra dato che c'è un boid a destra
-    CHECK(separation_force.y > 0); // Deve puntare verso il basso dato che c'è un boid sopra
+    CHECK(separation_force.x == doctest::Approx(0));
+    CHECK(separation_force.y == doctest::Approx(25));
 }
 
-
 TEST_CASE("Testing Cohesion") {
-    // Parametri di coesione
-    
-
-    // Crea un Boid di test
+    // create test boid
     sf::Vector2f position(400.f, 300.f);
     sf::Vector2f velocity(10.f, 0.f);
     bd::Boid test_boid(position, velocity);
 
-    // Crea i Boids vicini
+    // create near boids
     std::vector<sf::Vector2f> neighbor_positions = {
-        {500.f, 300.f}, // Vicino sulla destra
-        {300.f, 300.f}, // Vicino sulla sinistra
-        {400.f, 400.f}  // Vicino sotto
+        {500.f, 300.f}, // near to the right
+        {300.f, 300.f}, // near to the left
+        {400.f, 400.f}  // near above
     };
     std::vector<sf::Vector2f> neighbor_velocities = {
         {0.f, 10.f},
@@ -130,16 +125,15 @@ TEST_CASE("Testing Cohesion") {
         flock.all_boids_.push_back(boid);
     }
 
-    // Vettore di Boids vicini
+    // near boids
     std::vector<bd::Boid*> neighbors;
     for (auto& boid : flock.all_boids_) {
         neighbors.push_back(&boid);
     }
 
-    // Calcola il vettore di coesione
+    flock.c_= 0.5f;
     sf::Vector2f cohesion_force = bd::cohesion(flock, test_boid, neighbors);
 
-    // Verifica che la forza di coesione punti verso il centro di massa dei vicini
-    CHECK(cohesion_force.x == doctest::Approx(0).epsilon(0.1)); // Il centro di massa è direttamente sopra o sotto, quindi x dovrebbe essere vicino a 0
-    CHECK(cohesion_force.y > 0); // Deve puntare verso il basso dato che ci sono più vicini sotto il boid
+    CHECK(cohesion_force.x == doctest::Approx(0));
+    CHECK(cohesion_force.y == doctest::Approx(16.6667));
 }

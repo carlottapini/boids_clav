@@ -13,24 +13,24 @@ sf::RectangleShape axis(const float length, const float height,
   return axis;
 }
 
-float MeanXPosition(Flock& covey) {
+float MeanXPosition(Flock& covey, const float N) {
   float result{0.0f};
   for (auto& b_0 : covey.all_boids_) {
     result += (b_0.getPosition()).x;
   }
-  return result / (covey.all_boids_).size();
+  return result / N;
 }
 
-float MeanSpeed(Flock& covey) {
+float MeanSpeed(Flock& covey, const float N) {
   float result{0.0f};
   for (auto& b_i : covey.all_boids_) {
     float v = std::hypot((b_i.getVelocity()).x, (b_i.getVelocity()).y);
     result += v;
   }
-  return result / (covey.all_boids_).size();
+  return result / N;
 }
 
-float MeanDistance(Flock& covey) {
+float MeanDistance(Flock& covey, const float N) {
   float result{0.0f};
   float totalDistance{0.0f};
   for (auto& b_i : covey.all_boids_) {
@@ -38,9 +38,9 @@ float MeanDistance(Flock& covey) {
       sf::Vector2f diff = b_i.getPosition() - b_j.getPosition();
       totalDistance += std::hypot(diff.x, diff.y);
     }
-    result += totalDistance / (covey.all_boids_).size();
+    result += totalDistance / N;
   }
-  return result / (covey.all_boids_).size();
+  return result / N;
 }
 
 // float DevStd(Flock& covey) {}

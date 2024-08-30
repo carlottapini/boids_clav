@@ -4,10 +4,10 @@
 
 namespace bd {
 // calculate mean boid position per frame.
-float MeanXPosition(Flock& covey);
+float MeanXPosition(Flock& covey, const float N);
 
 // calculate mean boid speed per frame.
-float MeanSpeed(Flock& covey);
+float MeanSpeed(Flock& covey, const float N);
 
 // calculate mean nearby boids distance per frame
 //float MeanDistance(Flock& covey);

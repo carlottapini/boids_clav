@@ -70,7 +70,7 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
 
   sf::RenderWindow inputWindow(sf::VideoMode(width, height), "Input Parameters",
                                sf::Style::Close);
-  inputWindow.setPosition(sf::Vector2i(300, 200));
+  inputWindow.setPosition(sf::Vector2i(350, 100));
 
   std::vector<std::string> labels = {
       "Number of birds (n > 0):",     "Max Speed (maxSpeed > 0):",
@@ -160,7 +160,7 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
       // Blink the cursor every 500ms
       if (cursorClock.getElapsedTime().asMilliseconds() % 1000 < 500) {
         sf::RectangleShape cursor(
-            sf::Vector2f(2.f, activeInput.getCharacterSize()));
+            sf::Vector2f(2.f, static_cast<float>(activeInput.getCharacterSize())));
         cursor.setPosition(cursorPosition);
         cursor.setFillColor(sf::Color::Yellow);
         inputWindow.draw(cursor);
