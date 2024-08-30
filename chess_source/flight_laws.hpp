@@ -7,7 +7,7 @@
 
 namespace bd {
 // check if one boid is near to another one.
-bool near(Boid const& b_1, Boid const& b_2, float const& d);  // declaration
+bool near(Boid const& b_1, Boid const& b_2, float const& d);
 
 // create a vector of boids near to a given one.
 std::vector<Boid*> near_boids(Flock& covey, const Boid& b_0, const float& d_);

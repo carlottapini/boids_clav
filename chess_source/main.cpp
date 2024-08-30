@@ -49,7 +49,8 @@ int main() {
 
   // view for scrolling in the output window
   sf::View view;
-  view.setSize(output.getSize().x, output.getSize().y);
+  view.setSize(static_cast<float>(output.getSize().x),
+               static_cast<float>(output.getSize().y));
   view.setCenter(view.getSize().x / 2, view.getSize().y / 2);
 
   // create a vector containing all the boids.
@@ -105,7 +106,6 @@ int main() {
       }
     }
 
-    // Gestione eventi per la finestra del grafico
     sf::Event graph_event;
     while (graph.pollEvent(graph_event)) {
       if (graph_event.type == sf::Event::Closed) {
@@ -131,34 +131,34 @@ int main() {
       viewYMax = view.getSize().y;
     }
 
-    // Scroll the view with mouse wheel
+    // scroll the view with mouse wheel
     if (out_event.type == sf::Event::MouseWheelScrolled) {
       if (out_event.mouseWheelScroll.delta > 0) {
         if (view.getCenter().y - scrollAmount > viewYMin) {
-          view.move(0, -scrollAmount);  // Scroll up
+          view.move(0, -scrollAmount);  // scroll up
         } else {
           view.setCenter(view.getCenter().x, viewYMin);
         }
       } else if (out_event.mouseWheelScroll.delta < 0) {
         if (view.getCenter().y + scrollAmount < viewYMax) {
-          view.move(0, scrollAmount);  // Scroll down
+          view.move(0, scrollAmount);  // scroll down
         } else {
           view.setCenter(view.getCenter().x, viewYMax);
         }
       }
     }
 
-    // Scroll the view with arrow keys
+    // scroll the view with arrow keys
     if (out_event.type == sf::Event::KeyPressed) {
       if (out_event.key.code == sf::Keyboard::Up) {
         if (view.getCenter().y - scrollAmount > viewYMin) {
-          view.move(0, -scrollAmount);  // Scroll up
+          view.move(0, -scrollAmount);  // scroll up
         } else {
           view.setCenter(view.getCenter().x, viewYMin);
         }
       } else if (out_event.key.code == sf::Keyboard::Down) {
         if (view.getCenter().y + scrollAmount < viewYMax) {
-          view.move(0, scrollAmount);  // Scroll down
+          view.move(0, scrollAmount);  // scroll down
         } else {
           view.setCenter(view.getCenter().x, viewYMax);
         }
@@ -206,16 +206,17 @@ int main() {
     }
 
     const float N = static_cast<float>(n);
+    const size_t FRAME_FREQUENCY{100};
     const float GRAPH_MARGIN_X = 25.5f;
     const float GRAPH_MARGIN_Y = 10.f;
     const float AXIS_WIDTH = 2.f;
-    const float AXIS_SPACING = 1.f;  // Spacing between histogram bars
+    const float AXIS_SPACING = 1.f;  // spacing between histogram bars
 
     const float X_AXIS_LENGTH = GRAPH_SIZE - 2 * GRAPH_MARGIN_X;
     const float Y_AXIS_LENGTH = GRAPH_SIZE - 3 * GRAPH_MARGIN_Y;
     const float BINS = 26.f;
 
-    if (frameCount % 100 == 0) {
+    if (frameCount % FRAME_FREQUENCY == 0) {
       // calculate the averege X position of boids, scaled in a range between 0
       // and 25
       float avgXPosition = ((BINS - 1) * (bd::MeanXPosition(covey, N)) / WIDTH);
@@ -244,8 +245,8 @@ int main() {
                                barHeightX));  // -1 for spacing between bars
       bar.setPosition(
           GRAPH_MARGIN_X + XpositionHistory[i] * BARWIDTH,
-          GRAPH_SIZE - GRAPH_MARGIN_X - barHeightX);  // Bar position
-      bar.setFillColor(sf::Color(0, 0, 255));         // Bar color (blue)
+          GRAPH_SIZE - GRAPH_MARGIN_X - barHeightX);  // bar position
+      bar.setFillColor(sf::Color(0, 0, 255));         // bar color (blue)
       graph.draw(bar);
     }
 
@@ -259,8 +260,8 @@ int main() {
                                barHeightY));  // -1 for spacing between bars
       bar.setPosition(
           GRAPH_MARGIN_X + YpositionHistory[i] * BARWIDTH,
-          GRAPH_SIZE - GRAPH_MARGIN_X - barHeightY);  // Bar position
-      bar.setFillColor(sf::Color(0, 255, 0));         // Bar color (green)
+          GRAPH_SIZE - GRAPH_MARGIN_X - barHeightY);  // bar position
+      bar.setFillColor(sf::Color(0, 255, 0));         // bar color (green)
       graph1.draw(bar);
     }
 
@@ -327,12 +328,11 @@ int main() {
       y_text.setOrigin(0.f, y_text.getLocalBounds().height / 2);
       y_text.setPosition(GRAPH_MARGIN_Y, yPosition);
 
-      // Disegna il testo
       graph.draw(y_text);
       graph1.draw(y_text);
     }
 
-    if (frameCount % 1000 == 0) {
+    if (frameCount % FRAME_FREQUENCY == 0) {
       float meanDistance = bd::MeanDistance(covey, N);
       double devStdDistance = bd::DevStdDistance(covey, N);
       float meanSpeed = bd::MeanSpeed(covey, N);

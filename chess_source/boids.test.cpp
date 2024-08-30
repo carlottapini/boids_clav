@@ -43,20 +43,20 @@ TEST_CASE("Velocity's testing") {
   }
 
   SUBCASE("Testing limit velocity function") {
-    sf::Vector2f highVelocity(10.0f, 0.0f);  // Speed ​​higher than MAXSPEED
+    sf::Vector2f highVelocity(10.0f, 0.0f);  // speed ​​higher than MAXSPEED
     bd::Boid boid1(sf::Vector2f(0.0f, 0.0f), highVelocity);
     limitVelocity(boid1, MAXSPEED);
 
-    // Check that the speed is limited to MAXSPEED
+    // check that the speed is limited to MAXSPEED
     CHECK(std::hypot(boid1.getVelocity().x, boid1.getVelocity().y) ==
           doctest::Approx(MAXSPEED).epsilon(0.01));
-    // Case 2: Speed ​​already lower than the maximum permitted
-    sf::Vector2f lowVelocity(0.5f, 0.0f);  // Speed ​​lower than max_speed
+    // case 2: Speed ​​already lower than the maximum permitted
+    sf::Vector2f lowVelocity(0.5f, 0.0f);  // speed ​​lower than max_speed
     bd::Boid boid2(sf::Vector2f(0.0f, 0.0f), lowVelocity);
 
     limitVelocity(boid2, MAXSPEED);
 
-    // Check that the speed has not changed
+    // check that the speed has not changed
     CHECK(boid2.getVelocity() == lowVelocity);
   }
 }
@@ -65,31 +65,31 @@ TEST_CASE("Testing Boid compute_angle") {
   bd::Boid boid{sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f)};
 
   SUBCASE("Velocity in positive x direction") {
-    boid.setVelocity(sf::Vector2f(1.f, 1.f));  // Positive x and y
+    boid.setVelocity(sf::Vector2f(1.f, 1.f));  // positive x and y
     boid.compute_angle();
     CHECK(boid.getRotation() == doctest::Approx(32.5f).epsilon(0.01));
   }
 
   SUBCASE("Velocity in negative x direction") {
-    boid.setVelocity(sf::Vector2f(-1.f, 1.f));  // Negative x and positive y
+    boid.setVelocity(sf::Vector2f(-1.f, 1.f));  // negative x and positive y
     boid.compute_angle();
     CHECK(boid.getRotation() == doctest::Approx(327.5f).epsilon(0.01));
   }
 
   SUBCASE("Velocity in positive y direction") {
-    boid.setVelocity(sf::Vector2f(0.f, 1.f));  // Zero x and positive y
+    boid.setVelocity(sf::Vector2f(0.f, 1.f));  // zero x and positive y
     boid.compute_angle();
     CHECK(boid.getRotation() == doctest::Approx(90.f).epsilon(0.01));
   }
 
   SUBCASE("Velocity in negative y direction") {
-    boid.setVelocity(sf::Vector2f(0.f, -1.f));  // Zero x and negative y
+    boid.setVelocity(sf::Vector2f(0.f, -1.f));  // zero x and negative y
     boid.compute_angle();
     CHECK(boid.getRotation() == doctest::Approx(270.f).epsilon(0.01));
   }
 
   SUBCASE("Velocity at origin") {
-    boid.setVelocity(sf::Vector2f(0.f, 0.f));  // Zero velocity
+    boid.setVelocity(sf::Vector2f(0.f, 0.f));  // zero velocity
     boid.compute_angle();
     CHECK(boid.getRotation() == doctest::Approx(0.f).epsilon(0.01));
   }
