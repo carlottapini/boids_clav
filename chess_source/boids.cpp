@@ -104,7 +104,7 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
   }
 
   size_t currentInput{};
-  sf::Clock cursorClock;  // Clock for cursor blinking
+  sf::Clock cursorClock;  // clock for cursor blinking
 
   while (inputWindow.isOpen()) {
     sf::Event event;
@@ -112,7 +112,7 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
       if (event.type == sf::Event::Closed) inputWindow.close();
       if (event.type == sf::Event::TextEntered) {
         if ((event.text.unicode >= 48 && event.text.unicode <= 57) ||
-            event.text.unicode == 46) {  // nurmbers and dot
+            event.text.unicode == 46) {  // numbers and dot
           inputs[currentInput] += static_cast<char>(event.text.unicode);
           textInputs[currentInput].setString(inputs[currentInput]);
         } else if (event.text.unicode == 8 &&
@@ -181,13 +181,13 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
       for (const auto& label : textLabels) inputWindow.draw(label);
       for (const auto& input : textInputs) inputWindow.draw(input);
 
-      // Draw the blinking cursor
+      // draw the blinking cursor
       if (currentInput < textInputs.size()) {
         sf::Text& activeInput = textInputs[currentInput];
         sf::Vector2f cursorPosition =
             activeInput.findCharacterPos(inputs[currentInput].size());
 
-        // Blink the cursor every 500ms
+        // blink the cursor every 500ms
         if (cursorClock.getElapsedTime().asMilliseconds() % 1000 < 500) {
           sf::RectangleShape cursor(sf::Vector2f(
               2.f, static_cast<float>(activeInput.getCharacterSize())));

@@ -13,7 +13,7 @@ TEST_CASE("Testing flight functions") {
 
   bd::Flock flock;
 
-  // Create boids and add them to flock
+  // create boids and add them to flock
   for (size_t i = 0; i < positions.size(); ++i) {
     bd::Boid boid(positions[i], velocities[i]);
     flock.all_boids_.push_back(boid);
