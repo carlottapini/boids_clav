@@ -2,14 +2,13 @@
 #define BOIDS_HPP
 
 #include <SFML/Graphics.hpp>
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <random>
 #include <vector>
-#include <cassert>
-
 
 // create namespace bd.
 namespace bd {
@@ -24,6 +23,10 @@ class Boid : public sf::Drawable, public sf::Transformable {
   // boid constructor.
   Boid(sf::Vector2f pos, sf::Vector2f sp) : position(pos), velocity(sp) {
     birdTexture.loadFromFile("pidgey.png");
+    if (!birdTexture.loadFromFile("pidgey.png")) {
+      std::cerr << "Error loading texture pidgey.png" << "' from "
+                << std::filesystem::current_path() << std::endl;
+    }
     birdSprite.setTexture(birdTexture);
     birdSprite.setOrigin(297.5f, 281.f);
     setPosition(position);
@@ -62,6 +65,7 @@ void limitVelocity(Boid& crazy_boid, const float& max_speed);
 void pacman_effect(float wid, float hei, Boid& curr_boid);
 
 // parameter input
-void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, float& d_s_, float& s_, float& a_, float& c_);
+void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
+                     float& d_s_, float& s_, float& a_, float& c_);
 }  // namespace bd
 #endif

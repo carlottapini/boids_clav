@@ -14,6 +14,11 @@ float MeanSpeed(Flock& covey);
 
 // calculate campionary standard deviance.
 //float DevStd(Flock& covey);
+
+// draw axis
+sf::RectangleShape axis(const float length, const float height, const float x_margin, const float y_margin);
+
+
 }  // namespace bd
 
 #endif

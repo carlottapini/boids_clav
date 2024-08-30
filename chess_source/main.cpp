@@ -5,6 +5,10 @@
 int main() {
   sf::Font font;
   font.loadFromFile("Roboto-Black.ttf");
+  if (!font.loadFromFile("Roboto-Black.ttf")) {
+    std::cerr << "Errore nel caricamento del font!" << std::endl;
+    return -1;
+  }
 
   int n{};
   float maxSpeed{};
@@ -15,25 +19,25 @@ int main() {
   float c{};
   bd::inputParameters(font, n, maxSpeed, d, d_s, s, a, c);
 
-  const size_t height{600};
-  const size_t width{800};
-  const size_t graph_size{500};
+  const size_t HEIGHT{600};
+  const size_t WIDTH{800};
+  const size_t GRAPH_SIZE{500};
 
   // create the window and set its position.
   sf::RenderWindow window(
-      sf::VideoMode(width, height), "birds simulation",
+      sf::VideoMode(WIDTH, HEIGHT), "birds simulation",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   window.setPosition(sf::Vector2i(0, 50));
 
   sf::RenderWindow graph(
-      sf::VideoMode(graph_size, graph_size), "graph",
+      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "graph",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  graph.setPosition(sf::Vector2i(width, 50));
+  graph.setPosition(sf::Vector2i(WIDTH, 50));
 
   sf::RenderWindow graph1(
-      sf::VideoMode(graph_size, graph_size), "graph1",
+      sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "graph1",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-  graph1.setPosition(sf::Vector2i(width, 50 + graph_size));
+  graph1.setPosition(sf::Vector2i(WIDTH, 50 + GRAPH_SIZE));
 
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
@@ -44,10 +48,10 @@ int main() {
   std::random_device rd;                 // create the engine
   std::default_random_engine eng{rd()};  // give different seed each time
   std::uniform_real_distribution<float> x_distribution(
-      0.0f, width - 50.0f);  // set the range for x values, extracted with a
+      0.0f, WIDTH - 50.0f);  // set the range for x values, extracted with a
                              // uniform distribution
   std::uniform_real_distribution<float> y_distribution(
-      0.0f, height - 50.f);  // set the range for y values, extracted with a
+      0.0f, HEIGHT - 50.f);  // set the range for y values, extracted with a
                              // uniform distribution
 
   // fill the birds vector with boids
@@ -100,7 +104,7 @@ int main() {
     for (auto& bird : covey.all_boids_) {
       bird.compute_angle();
       window.draw(bird);
-      pacman_effect(width, height, bird);
+      pacman_effect(WIDTH, HEIGHT, bird);
       bird.move(bird.getVelocity());
       std::vector<bd::Boid*> neighbors = bd::near_boids(covey, bird, d);
       std::vector<bd::Boid*> neighbors_s = bd::near_boids(covey, bird, d_s);
@@ -170,54 +174,60 @@ int main() {
 
             */
     }
-    const float x_axlenght = graph_size - 40.f;
-    const float y_axlenght = graph_size - 30.f;
-    const float histo_bins = 26.f;
+
+    // Define constants for margins and axis settings
+    const float GRAPH_MARGIN_X = 25.5f;
+    const float GRAPH_MARGIN_Y = 10.f;
+    const float AXIS_WIDTH = 2.f;
+    const float AXIS_SPACING = 1.f;  // Spacing between histogram bars
+
+    const float X_AXIS_LENGTH = GRAPH_SIZE - 2 * GRAPH_MARGIN_X;
+    const float Y_AXIS_LENGTH = GRAPH_SIZE - 3 * GRAPH_MARGIN_Y;
+    const float BINS = 26.f;
 
     if (frameCount % 1000 == 0) {
-      float avgXPosition =
-          ((histo_bins - 1) * (bd::MeanXPosition(covey)) / width);
+      // calculate the averege X position of boids, scaled in a range between 0
+      // and 25
+      float avgXPosition = ((BINS - 1) * (bd::MeanXPosition(covey)) / WIDTH);
       XpositionHistory.push_back(std::round(avgXPosition));
 
       float avgVelocity = (bd::MeanSpeed(covey) / maxSpeed);
-      speedHistory.push_back(avgVelocity);
+      speedHistory.push_back(std::round(avgVelocity));
     }
+
+    // define the width of the histogram bars
+    const float BARWIDTH = X_AXIS_LENGTH / (BINS - 1);
 
     // draw histogram bars
     for (size_t i = 0; i < XpositionHistory.size(); ++i) {
       sf::RectangleShape bar;
-      float barWidth = x_axlenght / (histo_bins - 1);
-      float barHeight = (y_axlenght - 10.f) *
+      float barHeight = (Y_AXIS_LENGTH - 10.f) *
                         static_cast<float>(std::count(XpositionHistory.begin(),
                                                       XpositionHistory.end(),
                                                       XpositionHistory[i])) /
                         static_cast<float>(XpositionHistory.size());
-      bar.setSize(sf::Vector2f(barWidth - 1,
+      bar.setSize(sf::Vector2f(BARWIDTH - AXIS_SPACING,
                                barHeight));  // -1 for spacing between bars
-      bar.setPosition(25.5f + XpositionHistory[i] * barWidth,
-                      graph_size - 30.f - barHeight);  // Bar position
-      bar.setFillColor(sf::Color(0, 0, 255));          // Bar color (blue)
+      bar.setPosition(GRAPH_MARGIN_X + XpositionHistory[i] * BARWIDTH,
+                      GRAPH_SIZE - GRAPH_MARGIN_X - barHeight);  // Bar position
+      bar.setFillColor(sf::Color(0, 0, 255));  // Bar color (blue)
       graph.draw(bar);
     }
 
     // draw x axis
-    sf::RectangleShape horizontalLine(sf::Vector2f(x_axlenght, 2.f));
-    horizontalLine.setPosition(25.f, graph_size - 30);
-    horizontalLine.setFillColor(sf::Color::Black);
+    sf::RectangleShape horizontalLine = bd::axis(X_AXIS_LENGTH, AXIS_WIDTH, GRAPH_MARGIN_X, GRAPH_SIZE - GRAPH_MARGIN_X - 0.5f);
     graph.draw(horizontalLine);
     graph1.draw(horizontalLine);
 
     // draw y axis
-    sf::RectangleShape verticalLine(sf::Vector2f(2.f, y_axlenght));
-    verticalLine.setPosition(25.5f, 10.f);
-    verticalLine.setFillColor(sf::Color::Black);
+    sf::RectangleShape verticalLine = bd::axis(AXIS_WIDTH, Y_AXIS_LENGTH, GRAPH_MARGIN_X, GRAPH_MARGIN_Y);
     graph.draw(verticalLine);
     graph1.draw(verticalLine);
 
     // draw the x values under x axis
-    for (float i = 0.f; i < histo_bins; ++i) {
+    for (float i = 0.f; i < BINS; ++i) {
       // text boxes x coordinate
-      float xPosition = 25.f + i * (x_axlenght / (histo_bins - 1));
+      float xPosition = 25.f + i * (X_AXIS_LENGTH / (BINS - 1));
       if (static_cast<int>(i) % 5 == 0) {
         // create the text for the x values
         sf::Text x_text;
@@ -225,25 +235,26 @@ int main() {
         x_text.setCharacterSize(15);
         x_text.setFillColor(sf::Color::Black);
         x_text.setString(
-            std::to_string(static_cast<int>(i * width / (histo_bins - 1))));
+            std::to_string(static_cast<int>(i * WIDTH / (BINS - 1))));
         x_text.setOrigin(x_text.getLocalBounds().width / 2.f, 0);
-        x_text.setPosition(xPosition, graph_size - 20);
+        x_text.setPosition(xPosition, GRAPH_SIZE - 20);
 
         graph.draw(x_text);
       }
 
       sf::RectangleShape separateLine(
-          sf::Vector2f(1.f, y_axlenght));  // Lunghezza dell'asse e altezza
+          sf::Vector2f(1.f, Y_AXIS_LENGTH));  // Lunghezza dell'asse e altezza
       separateLine.setPosition(
-          25.5f + static_cast<float>(i) * x_axlenght / (histo_bins - 1),
-          10.f);  // Posizionamento dell'asse al centro
+          GRAPH_MARGIN_X + i * BARWIDTH,
+          GRAPH_MARGIN_Y);  // Posizionamento dell'asse al centro
       separateLine.setFillColor(sf::Color::Black);
       graph.draw(separateLine);
     }
 
     // draw y values near to y axis
     for (float i : {0.f, 1.f}) {
-      float yPosition = (graph_size - 30.f) - i * (y_axlenght - 10.f);
+      float yPosition = (GRAPH_SIZE - GRAPH_MARGIN_X - 0.5f) -
+                        i * (Y_AXIS_LENGTH - GRAPH_MARGIN_Y);
       sf::Text y_text;
       y_text.setFont(font);
       y_text.setCharacterSize(15);
@@ -251,7 +262,7 @@ int main() {
 
       y_text.setString(std::to_string(static_cast<int>(i)));
       y_text.setOrigin(0.f, y_text.getLocalBounds().height / 2);
-      y_text.setPosition(10.f, yPosition);
+      y_text.setPosition(GRAPH_MARGIN_Y, yPosition);
 
       // Disegna il testo
       graph.draw(y_text);

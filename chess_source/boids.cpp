@@ -23,13 +23,14 @@ void limitVelocity(Boid& crazy_boid, const float& max_speed) {
 void pacman_effect(float wid, float hei, Boid& curr_boid) {
   sf::Vector2f curr_pos = curr_boid.getPosition();
   if (curr_pos.x > wid)
-    curr_boid.setPosition(0.0f, curr_pos.y);
+    curr_pos.x = 0.0f;
   else if (curr_pos.x < 0)
-    curr_boid.setPosition(wid, curr_pos.y);
+    curr_pos.x = wid;
   if (curr_pos.y > hei)
-    curr_boid.setPosition(curr_pos.x, 0.0f);
+    curr_pos.y = 0.0f;
   else if (curr_pos.y < 0)
-    curr_boid.setPosition(curr_pos.x, hei);
+    curr_pos.y = hei;
+  curr_boid.setPosition(curr_pos);
 }
 
 void Boid::compute_angle() {
@@ -62,7 +63,8 @@ void Boid::setVelocity(const sf::Vector2f& new_velocity) {
   velocity = new_velocity;
 }
 
-void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, float& d_s_, float& s_, float& a_, float& c_) {
+void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
+                     float& d_s_, float& s_, float& a_, float& c_) {
   const size_t width{500};
   const size_t height{500};
 
@@ -70,15 +72,13 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, floa
                                sf::Style::Close);
   inputWindow.setPosition(sf::Vector2i(300, 200));
 
-  // Array di stringhe per le etichette e gli input
   std::vector<std::string> labels = {
       "Number of birds (n > 0):",     "Max Speed (maxSpeed > 0):",
-      "Vision distance (d > 12 ):",  "Separation range (12 < d_s < d):",
+      "Vision distance (d > 12 ):",   "Separation range (12 < d_s < d):",
       "Repulsion intensity (s > 0):", "Alignment factor (0 < a < 1):",
       "Cohesion factor (0 < c < 1):"};
 
   std::vector<std::string> inputs = {"", "", "", "", "", "", ""};
- 
 
   std::vector<sf::Text> textLabels;
   std::vector<sf::Text> textInputs;
@@ -88,7 +88,7 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, floa
     label.setFont(font_);
     label.setString(labels[i]);
     label.setCharacterSize(20);
-    label.setPosition(10, 50 + static_cast<float> (i) * 50);
+    label.setPosition(10, 50 + static_cast<float>(i) * 50);
     label.setFillColor(sf::Color::White);
 
     textLabels.push_back(label);
@@ -97,27 +97,29 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, floa
     input.setFont(font_);
     input.setString(inputs[i]);
     input.setCharacterSize(20);
-    input.setPosition(350, 50 + static_cast<float> (i) * 50);
+    input.setPosition(350, 50 + static_cast<float>(i) * 50);
     input.setFillColor(sf::Color::Yellow);
 
     textInputs.push_back(input);
   }
 
   size_t currentInput{};
+  sf::Clock cursorClock;  // Clock for cursor blinking
+
   while (inputWindow.isOpen()) {
     sf::Event event;
     while (inputWindow.pollEvent(event)) {
       if (event.type == sf::Event::Closed) inputWindow.close();
       if (event.type == sf::Event::TextEntered) {
         if ((event.text.unicode >= 48 && event.text.unicode <= 57) ||
-            event.text.unicode == 46) {  // numeri e punto
+            event.text.unicode == 46) {  // nurmbers and dot
           inputs[currentInput] += static_cast<char>(event.text.unicode);
           textInputs[currentInput].setString(inputs[currentInput]);
         } else if (event.text.unicode == 8 &&
                    !inputs[currentInput].empty()) {  // backspace
           inputs[currentInput].erase(inputs[currentInput].size() - 1);
           textInputs[currentInput].setString(inputs[currentInput]);
-        } 
+        }
       }
 
       if (event.type == sf::Event::KeyPressed &&
@@ -145,10 +147,26 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_, floa
     }
 
     inputWindow.clear(sf::Color::Black);
+
     for (const auto& label : textLabels) inputWindow.draw(label);
     for (const auto& input : textInputs) inputWindow.draw(input);
 
+    // Draw the blinking cursor
+    if (currentInput < textInputs.size()) {
+      sf::Text& activeInput = textInputs[currentInput];
+      sf::Vector2f cursorPosition =
+          activeInput.findCharacterPos(inputs[currentInput].size());
+
+      // Blink the cursor every 500ms
+      if (cursorClock.getElapsedTime().asMilliseconds() % 1000 < 500) {
+        sf::RectangleShape cursor(
+            sf::Vector2f(2.f, activeInput.getCharacterSize()));
+        cursor.setPosition(cursorPosition);
+        cursor.setFillColor(sf::Color::Yellow);
+        inputWindow.draw(cursor);
+      }
+    }
     inputWindow.display();
   }
 }
-}
+}  // namespace bd

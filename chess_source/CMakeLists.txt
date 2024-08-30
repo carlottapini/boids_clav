@@ -35,5 +35,5 @@ if (BUILD_TESTING)
   # aggiungi l'eseguibile all.t alla lista dei test
   target_link_libraries(boids.t PRIVATE sfml-graphics)
   # add_test(NAME all.t COMMAND all.t)
-  add_test(NAME boids_test COMMAND boids_test)
+  add_test(NAME boids.t COMMAND boids.t)
 endif()
