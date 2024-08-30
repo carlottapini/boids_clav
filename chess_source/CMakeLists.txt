@@ -31,7 +31,7 @@ target_link_libraries(chess PRIVATE sfml-graphics)
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)
   # aggiungi l'eseguibile all.t
-  add_executable(boids.t boids.test.cpp boids.cpp)
+  add_executable(boids.t boids.test.cpp boids.cpp flight_laws.cpp) 
   # aggiungi l'eseguibile all.t alla lista dei test
   target_link_libraries(boids.t PRIVATE sfml-graphics)
   # add_test(NAME all.t COMMAND all.t)

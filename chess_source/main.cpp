@@ -22,6 +22,9 @@ int main() {
   const size_t HEIGHT{600};
   const size_t WIDTH{800};
   const size_t GRAPH_SIZE{500};
+  const size_t OUT_SIZE_W{800};
+  const size_t OUT_SIZE_H{300};
+
 
   // create the window and set its position.
   sf::RenderWindow window(
@@ -38,6 +41,11 @@ int main() {
       sf::VideoMode(GRAPH_SIZE, GRAPH_SIZE), "graph1",
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   graph1.setPosition(sf::Vector2i(WIDTH, 50 + GRAPH_SIZE));
+
+  sf::RenderWindow output(
+      sf::VideoMode(OUT_SIZE_W, OUT_SIZE_H), "output",
+      sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+  output.setPosition(sf::Vector2i(0, 600));
 
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
@@ -70,7 +78,7 @@ int main() {
   std::vector<float> speedHistory;
 
   // run the program as long as the window is open
-  while (window.isOpen() || graph.isOpen() || graph1.isOpen()) {
+  while (window.isOpen() || graph.isOpen() || graph1.isOpen()|| output.isOpen()) {
     // check all the window's events that were triggered since the last
     // iteration of the loop
     sf::Event event;
@@ -88,6 +96,12 @@ int main() {
         graph1.close();
       }
     }
+    sf::Event out_event;
+    while (output.pollEvent(out_event)) {
+      if (out_event.type == sf::Event::Closed) {
+        output.close();
+      }
+    }
 
     // Controlla se il tasto ESC è premuto
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
@@ -99,6 +113,7 @@ int main() {
     window.clear(sf::Color(145, 224, 255));
     graph.clear(sf::Color(255, 255, 255));
     graph1.clear(sf::Color(255, 255, 255));
+    output.clear(sf::Color(255,255,255));
 
     // draw each boid of birds vector
     for (auto& bird : covey.all_boids_) {
