@@ -1,7 +1,8 @@
+#include <sstream>
+
 #include "boids.hpp"
 #include "flight_laws.hpp"
 #include "statistics.hpp"
-#include <sstream>
 
 int main() {
   sf::Font font;
@@ -46,6 +47,11 @@ int main() {
       sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
   output.setPosition(sf::Vector2i(0, HEIGHT + 30));
 
+  // view for scrolling in the output window
+  sf::View view;
+  view.setSize(output.getSize().x, output.getSize().y);
+  view.setCenter(view.getSize().x / 2, view.getSize().y / 2);
+
   // create a vector containing all the boids.
   std::vector<bd::Boid> birds;
   birds.reserve(static_cast<size_t>(n));
@@ -74,17 +80,15 @@ int main() {
 
   size_t frameCount{0};
   sf::Text outputText;
-    outputText.setFont(font);
-    outputText.setCharacterSize(15);
-    outputText.setFillColor(sf::Color::White);
-    outputText.setPosition(10, 10);
-    std::ostringstream oss; 
-    oss << std::left << std::setw(10) << "Frame"
-        << std::setw(20) << "Mean Distance"
-        << std::setw(20) << "Std Dev Distance"
-        << std::setw(20) << "Mean Speed"
-        << std::setw(20) << "Std Dev Speed"
-        << "\n";
+  outputText.setFont(font);
+  outputText.setCharacterSize(15);
+  outputText.setFillColor(sf::Color::White);
+  outputText.setPosition(10, 10);
+  std::ostringstream oss;
+  oss << std::left << std::setw(10) << "Frame" << std::setw(20)
+      << "Mean Distance" << std::setw(20) << "Std Dev Distance" << std::setw(20)
+      << "Mean Speed" << std::setw(20) << "Std Dev Speed"
+      << "\n";
   std::vector<float> XpositionHistory;
   std::vector<float> YpositionHistory;
   std::vector<float> speedHistory;
@@ -109,6 +113,7 @@ int main() {
         graph1.close();
       }
     }
+
     sf::Event out_event;
     while (output.pollEvent(out_event)) {
       if (out_event.type == sf::Event::Closed) {
@@ -116,7 +121,51 @@ int main() {
       }
     }
 
-    // Controlla se il tasto ESC è premuto
+    // limit scrolling parameters for output window
+    float scrollAmount = 1.f;
+    float viewYMin = view.getSize().y / 2;
+    float viewYMax{};
+    if (outputText.getGlobalBounds().height > view.getSize().y) {
+      viewYMax = outputText.getGlobalBounds().height - view.getSize().y / 2;
+    } else {
+      viewYMax = view.getSize().y;
+    }
+
+    // Scroll the view with mouse wheel
+    if (out_event.type == sf::Event::MouseWheelScrolled) {
+      if (out_event.mouseWheelScroll.delta > 0) {
+        if (view.getCenter().y - scrollAmount > viewYMin) {
+          view.move(0, -scrollAmount);  // Scroll up
+        } else {
+          view.setCenter(view.getCenter().x, viewYMin);
+        }
+      } else if (out_event.mouseWheelScroll.delta < 0) {
+        if (view.getCenter().y + scrollAmount < viewYMax) {
+          view.move(0, scrollAmount);  // Scroll down
+        } else {
+          view.setCenter(view.getCenter().x, viewYMax);
+        }
+      }
+    }
+
+    // Scroll the view with arrow keys
+    if (out_event.type == sf::Event::KeyPressed) {
+      if (out_event.key.code == sf::Keyboard::Up) {
+        if (view.getCenter().y - scrollAmount > viewYMin) {
+          view.move(0, -scrollAmount);  // Scroll up
+        } else {
+          view.setCenter(view.getCenter().x, viewYMin);
+        }
+      } else if (out_event.key.code == sf::Keyboard::Down) {
+        if (view.getCenter().y + scrollAmount < viewYMax) {
+          view.move(0, scrollAmount);  // Scroll down
+        } else {
+          view.setCenter(view.getCenter().x, viewYMax);
+        }
+      }
+    }
+
+    // check if ESC key is pressed
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
       window.close();
       graph.close();
@@ -282,29 +331,31 @@ int main() {
       graph.draw(y_text);
       graph1.draw(y_text);
     }
+
     if (frameCount % 1000 == 0) {
-            float meanDistance = bd::MeanDistance(covey, static_cast<float>(n));
-            double devStdDistance = bd::DevStdDistance(covey, static_cast<float>(n));
-            float meanSpeed = bd::MeanSpeed(covey, static_cast<float>(n));
-            double devStdSpeed = bd::DevStdSpeed(covey, static_cast<float>(n));
+      float meanDistance = bd::MeanDistance(covey, N);
+      double devStdDistance = bd::DevStdDistance(covey, N);
+      float meanSpeed = bd::MeanSpeed(covey, N);
+      double devStdSpeed = bd::DevStdSpeed(covey, N);
 
-            oss << std::right << std::setw(10) << frameCount
-                << std::setw(20) << std::fixed << std::setprecision(2) <<" "<< meanDistance
-                << std::setw(20) << std::fixed << std::setprecision(2) << " " << devStdDistance
-                << std::setw(20) << std::fixed << std::setprecision(2) << "" << meanSpeed
-                << std::setw(20) << std::fixed << std::setprecision(2) << "  "<< devStdSpeed
-                << "\n";
+      oss << std::right << std::setw(10) << frameCount << std::setw(20)
+          << std::fixed << std::setprecision(2) << " " << meanDistance
+          << std::setw(20) << std::fixed << std::setprecision(2) << " "
+          << devStdDistance << std::setw(20) << std::fixed
+          << std::setprecision(2) << "" << meanSpeed << std::setw(20)
+          << std::fixed << std::setprecision(2) << "  " << devStdSpeed << "\n";
 
-            outputText.setString(oss.str());
-            
-        }
+      outputText.setString(oss.str());
+    }
+    output.setView(view);
+    output.draw(outputText);
+
     ++frameCount;
 
     // end the current frame
     window.display();
     graph.display();
     graph1.display();
-    output.draw(outputText);
     output.display();
   }
 
