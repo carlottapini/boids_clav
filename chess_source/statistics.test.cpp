@@ -31,7 +31,12 @@ TEST_CASE("means' test"){
     float dist13 = std::hypot(30.f - 10.f, 40.f - 20.f);  
     float dist23 = std::hypot(30.f - 20.f, 40.f - 30.f); 
 
+    // Calculate mean distances between each boid
+    float dist1 = (dist12 + dist13)/2.f;
+    float dist2 = (dist12 + dist23)/2.f;
+    float dist3 = (dist13 + dist23)/2.f;
+
     // The mean distance should be (dist12 + dist13 + dist23) / 3
-    CHECK(mean_distance == doctest::Approx((dist12+dist13+dist23)/3).epsilon(0.01));
+    CHECK(mean_distance == doctest::Approx((dist1+dist2+dist3)/3).epsilon(0.01));
     }
 }

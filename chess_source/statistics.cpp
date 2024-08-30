@@ -40,15 +40,13 @@ float MeanSpeed(Flock& covey, const float N) {
 
 float MeanDistance(Flock& covey, const float N) {
   float result{0.0f};
-  float totalDistance{0.0f};
   for (auto& b_i : covey.all_boids_) {
     for (auto& b_j : covey.all_boids_) {
       sf::Vector2f diff = b_i.getPosition() - b_j.getPosition();
-      totalDistance += std::hypot(diff.x, diff.y);
-    }
-    result += totalDistance / N;
+      result += (std::hypot(diff.x, diff.y)/(N-1));
+    }; 
   }
-  return result / N;
+  return result/ N;
 }
 
 // float DevStd(Flock& covey) {}

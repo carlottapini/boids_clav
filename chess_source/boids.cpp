@@ -126,25 +126,55 @@ void inputParameters(sf::Font& font_, int& n_, float& maxSpeed_, float& d_,
           event.key.code == sf::Keyboard::Enter) {
         currentInput++;
         if (currentInput >= textInputs.size()) {
-          n_ = std::stoi(inputs[0]);
-          assert(n_ > 0);
-          maxSpeed_ = std::stof(inputs[1]);
-          assert(maxSpeed_ > 0);
-          d_ = std::stof(inputs[2]);
-          assert(12.f < d_);
-          d_s_ = std::stof(inputs[3]);
-          assert(12.f < d_s_);
-          assert(d_s_ < d_);
-          s_ = std::stof(inputs[4]);
-          assert(0 <= s_ && s_ <= 1);
-          a_ = std::stof(inputs[5]);
-          assert(0 <= a_);
-          c_ = std::stof(inputs[6]);
-          assert(0 <= c_ && c_ <= 1);
-          inputWindow.close();
+          try {
+            n_ = std::stoi(inputs[0]);
+            if (n_ <= 0) throw std::invalid_argument{"n must be positive"};
+
+            maxSpeed_ = std::stof(inputs[1]);
+            if (maxSpeed_ <= 0)
+              throw std::invalid_argument{"maximum speed must be positive"};
+
+            d_ = std::stof(inputs[2]);
+            if (d_ < 12.f)
+              throw std::invalid_argument{"vision distance is too short"};
+
+            d_s_ = std::stof(inputs[3]);
+            if (d_s_ < 12.f)
+              throw std::invalid_argument{"separation distance is too short"};
+            if (d_s_ > d_)
+              throw std::invalid_argument{
+                  "vision distance is shorter than separation distance"};
+
+            s_ = std::stof(inputs[4]);
+            if (s_ < 0 || s_ > 1)
+              throw std::invalid_argument{"separation factor is out of range"};
+            a_ = std::stof(inputs[5]);
+            if (a_ < 0 || a_ > 1)
+              throw std::invalid_argument{"alignment factor is out of range"};
+            c_ = std::stof(inputs[6]);
+            if (c_ < 0 || c_ > 1)
+              throw std::invalid_argument{"cohesion factor is out of range"};
+            inputWindow.close();
+          } catch (const std::exception& e) {
+            sf::Text errorMessage;
+            errorMessage.setFont(font_);
+            errorMessage.setString("Error: " + std::string(e.what()));
+            errorMessage.setCharacterSize(20);
+            errorMessage.setFillColor(sf::Color::Red);
+            errorMessage.setPosition(10, height - 50);
+
+            inputWindow.clear(sf::Color::Black);
+            for (const auto& label : textLabels) inputWindow.draw(label);
+            for (const auto& input : textInputs) inputWindow.draw(input);
+            inputWindow.draw(errorMessage);
+            inputWindow.display();
+
+            // wait for some seconds, before removing the error message
+            sf::sleep(sf::seconds(2));
+            currentInput = 0;
+          }
         }
       }
-    }
 
     inputWindow.clear(sf::Color::Black);
 
