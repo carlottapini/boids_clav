@@ -33,11 +33,11 @@ class Boid : public sf::Drawable, public sf::Transformable {
 
   // calculate the angle in oder to make the boid alligned to the direction of
   // its displacement.
-  void compute_angle();  // declaration
+  void compute_angle();
 
   // allow boids to be drawn.
   virtual void draw(sf::RenderTarget& target,
-                    sf::RenderStates states) const override;  // declaration
+                    sf::RenderStates states) const override;
 
   // get the velocity vector of a boid
   sf::Vector2f getVelocity() const;
