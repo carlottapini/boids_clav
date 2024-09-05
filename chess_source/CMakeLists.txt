@@ -39,8 +39,13 @@ if (BUILD_TESTING)
   target_link_libraries(boids.t PRIVATE sfml-graphics)
   target_link_libraries(flight_laws.t PRIVATE sfml-graphics)
   target_link_libraries(statistics.t PRIVATE sfml-graphics)
+  
   # add_test(NAME all.t COMMAND all.t)
+  add_test(NAME copy_image
+         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/pidgey.png ${CMAKE_BINARY_DIR}/pidgey.png)
   add_test(NAME boids.t COMMAND boids.t)
   add_test(NAME flight_laws.t COMMAND flight_laws.t)
   add_test(NAME statistics.t COMMAND statistics.t)
+  add_test(NAME cleanup_image
+         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_BINARY_DIR}/pidgey.png)
 endif()
