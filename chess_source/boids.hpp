@@ -53,7 +53,7 @@ struct Flock {
   float c_;
 };
 
-// create a generetor of random velocity vector.
+// create a generator of random velocity vector.
 sf::Vector2f GenerateRdmSpeed(float vmax);
 
 // set a limit to the velocity of a boid.
